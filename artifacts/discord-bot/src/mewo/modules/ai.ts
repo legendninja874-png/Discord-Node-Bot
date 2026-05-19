@@ -386,26 +386,103 @@ export const cmdDownload: Handler = async (msg, args) => {
   }
 };
 
+async function imagineViaHorde(prompt: string, apiKey: string): Promise<Buffer> {
+  const submitRes = await fetch("https://stablehorde.net/api/v2/generate/async", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": apiKey,
+      "Client-Agent": "MewoBot:1.0:discord",
+    },
+    body: JSON.stringify({
+      prompt,
+      params: {
+        width: 768,
+        height: 768,
+        steps: 20,
+        cfg_scale: 7,
+        sampler_name: "k_euler_a",
+        n: 1,
+      },
+      nsfw: true,
+      censor_nsfw: false,
+      r2: false,
+    }),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!submitRes.ok) {
+    const body = await submitRes.text();
+    throw new Error(`horde submit ${submitRes.status}: ${body.slice(0, 200)}`);
+  }
+  const { id } = await submitRes.json() as { id: string };
+  for (let i = 0; i < 72; i++) {
+    await new Promise(r => setTimeout(r, 5000));
+    const checkRes = await fetch(`https://stablehorde.net/api/v2/generate/check/${id}`, {
+      headers: { "Client-Agent": "MewoBot:1.0:discord" },
+      signal: AbortSignal.timeout(10000),
+    });
+    const check = await checkRes.json() as { done: boolean; faulted?: boolean };
+    if (check.faulted) throw new Error("horde generation faulted");
+    if (check.done) {
+      const statusRes = await fetch(`https://stablehorde.net/api/v2/generate/status/${id}`, {
+        headers: { "Client-Agent": "MewoBot:1.0:discord" },
+        signal: AbortSignal.timeout(10000),
+      });
+      const status = await statusRes.json() as { generations: Array<{ img: string; model?: string }> };
+      const b64 = status.generations?.[0]?.img;
+      if (!b64) throw new Error("horde: no image in response");
+      console.log(`[MEWO AI] imagine done via horde model: ${status.generations[0]?.model}`);
+      return Buffer.from(b64, "base64");
+    }
+  }
+  throw new Error("horde timeout");
+}
+
+async function imagineViaPollinations(prompt: string): Promise<{ buffer: Buffer; ext: string }> {
+  const seed = Math.floor(Math.random() * 2147483647);
+  const encoded = encodeURIComponent(prompt);
+  const url = `https://image.pollinations.ai/prompt/${encoded}?model=flux-realism&width=1024&height=1024&seed=${seed}&nologo=true`;
+  const res = await fetch(url, { signal: AbortSignal.timeout(90000) });
+  if (!res.ok) throw new Error(`pollinations ${res.status}`);
+  const contentType = res.headers.get("content-type") ?? "image/jpeg";
+  const ext = contentType.includes("png") ? "png" : "jpg";
+  const buffer = Buffer.from(await res.arrayBuffer());
+  return { buffer, ext };
+}
+
 export const cmdGrokImagine: Handler = async (msg, args) => {
   if (!args.length) {
     await msg.reply({ embeds: [err("Provide a prompt. Usage: `mewo ai imagine <prompt>`")] });
     return;
   }
   const prompt = args.join(" ");
+  const hordeKey = process.env.AI_HORDE_API_KEY;
+  const useHorde = hordeKey && hordeKey !== "0000000000";
+
   const thinking = await msg.reply({
-    embeds: [new EmbedBuilder().setColor(0x00B4FF).setDescription("🎨 Generating image... (this may take a few seconds)")]
+    embeds: [new EmbedBuilder()
+      .setColor(0x00B4FF)
+      .setDescription(useHorde
+        ? "🎨 Generating image... (may take 1–2 minutes)"
+        : "🎨 Generating image... (this may take a few seconds)")
+    ]
   });
+
   try {
-    const seed = Math.floor(Math.random() * 2147483647);
-    const encoded = encodeURIComponent(prompt);
-    const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?model=flux-realism&width=1024&height=1024&seed=${seed}&nologo=true&safe=false&private=true`;
+    let buffer: Buffer;
+    let ext = "jpg";
+    let footer: string;
 
-    const res = await fetch(imageUrl, { signal: AbortSignal.timeout(90000) });
-    if (!res.ok) throw new Error(`fetch ${res.status}`);
-
-    const contentType = res.headers.get("content-type") ?? "image/jpeg";
-    const ext = contentType.includes("png") ? "png" : "jpg";
-    const buffer = Buffer.from(await res.arrayBuffer());
+    if (useHorde) {
+      buffer = await imagineViaHorde(prompt, hordeKey);
+      ext = "webp";
+      footer = "mewo • ai • AI Horde";
+    } else {
+      const result = await imagineViaPollinations(prompt);
+      buffer = result.buffer;
+      ext = result.ext;
+      footer = "mewo • ai • FLUX Realism";
+    }
 
     await thinking.edit({
       embeds: [new EmbedBuilder()
@@ -413,13 +490,13 @@ export const cmdGrokImagine: Handler = async (msg, args) => {
         .setTitle("AI Image Generation")
         .setDescription(`> ${prompt.slice(0, 200)}`)
         .setImage(`attachment://image.${ext}`)
-        .setFooter({ text: "mewo • ai • FLUX Realism" })
+        .setFooter({ text: footer })
       ],
       files: [{ attachment: buffer, name: `image.${ext}` }],
     });
   } catch (e) {
     console.error("[MEWO AI] imagine error:", e);
-    await thinking.edit({ embeds: [err("Image generation failed. Please try again.")] });
+    await thinking.edit({ embeds: [err("Image generation failed. Please try again.")] }).catch(() => {});
   }
 };
 

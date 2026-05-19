@@ -1,0 +1,16 @@
+2026-05-19T14:11:53.071298656Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:11:53.071316893Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T14:11:53.071320207Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:404:24)
+2026-05-19T14:11:53.071324343Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:13:52.822659673Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T14:13:52.822665590Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:404:24)
+2026-05-19T14:13:52.822670109Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:13:52.822674668Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:329:16)
+2026-05-19T14:14:00.831668252Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T14:14:00.831672646Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:404:24)
+2026-05-19T14:14:00.831676746Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:14:00.831680586Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:14:20.837478940Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T14:14:20.837484364Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:404:24)
+2026-05-19T14:14:20.837487300Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:14:20.837490685Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)

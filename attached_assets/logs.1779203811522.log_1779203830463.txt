@@ -1,0 +1,5 @@
+2026-05-19T15:15:22.416334795Z [err]  [MEWO AI] imagine error: Error: horde submit 403: {"message":"Due to heavy demand, for requests over 576x576 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client need
+2026-05-19T15:15:22.416339645Z [err]      at imagineViaHorde (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:415:11)
+2026-05-19T15:15:22.416343305Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T15:15:22.416350965Z [err]      at async cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:477:16)
+2026-05-19T15:15:22.416354185Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:329:16)

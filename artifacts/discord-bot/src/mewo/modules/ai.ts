@@ -397,8 +397,8 @@ async function imagineViaHorde(prompt: string, apiKey: string): Promise<Buffer> 
     body: JSON.stringify({
       prompt,
       params: {
-        width: 768,
-        height: 768,
+        width: 512,
+        height: 512,
         steps: 20,
         cfg_scale: 7,
         sampler_name: "k_euler_a",

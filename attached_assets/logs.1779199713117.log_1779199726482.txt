@@ -1,0 +1,464 @@
+2026-05-19T13:54:02.057615162Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T13:54:02.057619248Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:403:24)
+2026-05-19T13:54:02.057624552Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:54:02.057628573Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:54:10.617261278Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T13:54:10.617264813Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:403:24)
+2026-05-19T13:54:10.617268589Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:54:10.617272145Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:54:40.621278120Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T13:54:40.621282913Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:403:24)
+2026-05-19T13:54:40.621288501Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:54:40.621291919Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:54:41.320217529Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9) {
+2026-05-19T13:54:41.320220162Z [err]        enforce_nonce: false,
+2026-05-19T13:54:41.320226975Z [err]    requestBody: {
+2026-05-19T13:54:41.320227868Z [err]        embeds: [Array],
+2026-05-19T13:54:41.320234755Z [err]      files: [ [Object] ],
+2026-05-19T13:54:41.320239618Z [err]      json: {
+2026-05-19T13:54:41.320239635Z [err]  [MEWO AI] imagine error: DiscordAPIError[50035]: Invalid Form Body
+2026-05-19T13:54:41.320242481Z [err]      at async SequentialHandler.runRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:417:20)
+2026-05-19T13:54:41.320246141Z [err]  message_reference[MESSAGE_REFERENCE_UNKNOWN_MESSAGE]: Unknown message
+2026-05-19T13:54:41.320248542Z [err]      at async SequentialHandler.queueRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:169:11)
+2026-05-19T13:54:41.320250571Z [err]        content: undefined,
+2026-05-19T13:54:41.320253288Z [err]      at handleErrors (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/Shared.ts:148:10)
+2026-05-19T13:54:41.320253880Z [err]      at async _REST.request (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/REST.ts:210:20)
+2026-05-19T13:54:41.320260043Z [err]        tts: false,
+2026-05-19T13:54:41.320260441Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:54:41.320261486Z [err]      at async TextChannel.send (/app/node_modules/.pnpm/discord.js@14.26.2/node_modules/discord.js/src/structures/interfaces/TextBasedChannel.js:195:15)
+2026-05-19T13:54:41.320265248Z [err]        nonce: undefined,
+2026-05-19T13:54:41.320267918Z [err]      at async cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:408:5)
+2026-05-19T13:54:41.321632648Z [err]        allowed_mentions: undefined,
+2026-05-19T13:54:41.321642199Z [err]        flags: undefined,
+2026-05-19T13:54:41.321642471Z [err]      at handleErrors (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/Shared.ts:148:10)
+2026-05-19T13:54:41.321642475Z [err]        poll: undefined
+2026-05-19T13:54:41.321646737Z [err]        attachments: [Array],
+2026-05-19T13:54:41.321648864Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:54:41.321649610Z [err]        message_reference: [Object],
+2026-05-19T13:54:41.321653945Z [err]        sticker_ids: undefined,
+2026-05-19T13:54:41.321654507Z [err]      at async SequentialHandler.runRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:417:20)
+2026-05-19T13:54:41.321661557Z [err]        components: undefined,
+2026-05-19T13:54:41.321665395Z [err]        avatar_url: undefined,
+2026-05-19T13:54:41.321674606Z [err]    },
+2026-05-19T13:54:41.321675754Z [err]        username: undefined,
+2026-05-19T13:54:41.321676371Z [err]        thread_name: undefined,
+2026-05-19T13:54:41.321680024Z [err]    method: 'POST',
+2026-05-19T13:54:41.321681543Z [err]  }
+2026-05-19T13:54:41.321682447Z [err]    code: 50035,
+2026-05-19T13:54:41.321685908Z [err]      }
+2026-05-19T13:54:41.321689792Z [err]        applied_tags: undefined,
+2026-05-19T13:54:41.321690775Z [err]    url: 'https://discord.com/api/v10/channels/1479912035952230514/messages'
+2026-05-19T13:54:41.321691010Z [err]  [MEWO] Error in command "imagine": DiscordAPIError[10008]: Unknown Message
+2026-05-19T13:54:41.321691693Z [err]    status: 400,
+2026-05-19T13:54:41.321693721Z [err]      code: 50035,
+2026-05-19T13:54:41.321696729Z [err]    },
+2026-05-19T13:54:41.321702175Z [err]    rawError: {
+2026-05-19T13:54:41.321703325Z [err]      errors: { message_reference: [Object] }
+2026-05-19T13:54:41.321706453Z [err]      message: 'Invalid Form Body',
+2026-05-19T13:54:41.323256956Z [err]        message_reference: undefined,
+2026-05-19T13:54:41.323261345Z [err]    requestBody: {
+2026-05-19T13:54:41.323262952Z [err]        attachments: undefined,
+2026-05-19T13:54:41.323267678Z [err]      files: [],
+2026-05-19T13:54:41.323269659Z [err]        sticker_ids: undefined,
+2026-05-19T13:54:41.323273401Z [err]      json: {
+2026-05-19T13:54:41.323277400Z [err]        thread_name: undefined,
+2026-05-19T13:54:41.323279534Z [err]        content: undefined,
+2026-05-19T13:54:41.323284979Z [err]        tts: false,
+2026-05-19T13:54:41.323285612Z [err]        applied_tags: undefined,
+2026-05-19T13:54:41.323289468Z [err]        nonce: undefined,
+2026-05-19T13:54:41.323292556Z [err]        enforce_nonce: false,
+2026-05-19T13:54:41.323296043Z [err]        embeds: [Array],
+2026-05-19T13:54:41.323297750Z [err]      at async SequentialHandler.queueRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:169:11)
+2026-05-19T13:54:41.323300682Z [err]        components: undefined,
+2026-05-19T13:54:41.323303022Z [err]      at async _REST.request (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/REST.ts:210:20)
+2026-05-19T13:54:41.323305237Z [err]        username: undefined,
+2026-05-19T13:54:41.323308627Z [err]      at async GuildMessageManager.edit (/app/node_modules/.pnpm/discord.js@14.26.2/node_modules/discord.js/src/managers/MessageManager.js:255:15)
+2026-05-19T13:54:41.323310390Z [err]        avatar_url: undefined,
+2026-05-19T13:54:41.323313606Z [err]      at async cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:420:5)
+2026-05-19T13:54:41.323315303Z [err]        allowed_mentions: undefined,
+2026-05-19T13:54:41.323318986Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9) {
+2026-05-19T13:54:41.323320531Z [err]        flags: undefined,
+2026-05-19T13:54:41.324403401Z [err]        poll: undefined
+2026-05-19T13:54:41.324406799Z [err]      }
+2026-05-19T13:54:41.324409856Z [err]    },
+2026-05-19T13:54:41.324412528Z [err]    rawError: { message: 'Unknown Message', code: 10008 },
+2026-05-19T13:54:41.324415409Z [err]    code: 10008,
+2026-05-19T13:54:41.324418115Z [err]    status: 404,
+2026-05-19T13:54:41.324421007Z [err]    method: 'PATCH',
+2026-05-19T13:54:41.324423630Z [err]    url: 'https://discord.com/api/v10/channels/1479912035952230514/messages/1506293811020824607'
+2026-05-19T13:54:41.324426412Z [err]  }
+2026-05-19T13:55:20.875848743Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T13:55:20.875851581Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:403:24)
+2026-05-19T13:55:20.875854255Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:55:20.875857067Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:55:29.763915136Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T13:55:29.763919599Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:403:24)
+2026-05-19T13:55:29.763922659Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:55:29.763925883Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:55:59.756519934Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T13:55:59.756523180Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:403:24)
+2026-05-19T13:55:59.756526224Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:55:59.756529612Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:56:29.371546582Z [inf]  
+2026-05-19T13:56:29.371551238Z [inf]  > @workspace/discord-bot@0.0.0 start /app/artifacts/discord-bot
+2026-05-19T13:56:29.371556541Z [inf]  > tsx src/index.ts
+2026-05-19T13:56:29.371560936Z [inf]  
+2026-05-19T13:56:30.357405148Z [inf]  [PERSISTENCE] DATABASE_URL not set — using local files (data will be lost on redeploy).
+2026-05-19T13:56:30.357411700Z [inf]  [KEEP-ALIVE] HTTP server running on port 8080
+2026-05-19T13:56:30.759965788Z [inf]  [READY] Logged in as Last Stand Management#0533
+2026-05-19T13:56:30.759969254Z [inf]  [READY] Guilds in cache: 1
+2026-05-19T13:56:30.974711335Z [inf]  [READY] REST connection pre-warmed.
+2026-05-19T13:56:31.106589502Z [inf]  [READY] Cleared all global application commands (using guild-only registration).
+2026-05-19T13:56:31.370842179Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.370849681Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.370853661Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.370901288Z [err]  [ERROR] Failed to set guild commands for 1479910330669990025: DiscordAPIError[30032]: Maximum number of application commands reached (100).
+2026-05-19T13:56:31.370904647Z [err]      at handleErrors (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/Shared.ts:148:10)
+2026-05-19T13:56:31.370908601Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:56:31.370911993Z [err]      at async SequentialHandler.runRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:417:20)
+2026-05-19T13:56:31.370915122Z [err]      at async SequentialHandler.queueRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:169:11)
+2026-05-19T13:56:31.370918979Z [err]      at async _REST.request (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/REST.ts:210:20)
+2026-05-19T13:56:31.370923922Z [err]      at async Client.<anonymous> (/app/artifacts/discord-bot/src/index.ts:536:9) {
+2026-05-19T13:56:31.370926852Z [err]    requestBody: {
+2026-05-19T13:56:31.370929662Z [err]      files: undefined,
+2026-05-19T13:56:31.370932548Z [err]      json: [
+2026-05-19T13:56:31.370935259Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.370938058Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.370940674Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.370943622Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372677467Z [err]    rawError: {
+2026-05-19T13:56:31.372685333Z [err]      message: 'Maximum number of application commands reached (100).',
+2026-05-19T13:56:31.372685977Z [err]    url: 'https://discord.com/api/v10/applications/1492904186264813669/guilds/1479910330669990025/commands'
+2026-05-19T13:56:31.372691433Z [err]      code: 30032
+2026-05-19T13:56:31.372697491Z [err]        ... 10 more items
+2026-05-19T13:56:31.372698166Z [err]  }
+2026-05-19T13:56:31.372699617Z [err]    },
+2026-05-19T13:56:31.372705379Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372707198Z [inf]  [READY] Kill leaderboard refreshed.
+2026-05-19T13:56:31.372707413Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372708729Z [err]      ]
+2026-05-19T13:56:31.372715260Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372715925Z [err]    code: 30032,
+2026-05-19T13:56:31.372717176Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Niggeer" (extended vowel (ee)) via compound: niger (dedup in "niggeer")
+2026-05-19T13:56:31.372718466Z [err]    },
+2026-05-19T13:56:31.372720284Z [err]        [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372723769Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372728752Z [err]    status: 400,
+2026-05-19T13:56:31.372728829Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372735236Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372737292Z [err]    method: 'PUT',
+2026-05-19T13:56:31.372740384Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372744001Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.372747634Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T13:56:31.373977939Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Niggerrr" (extended consonant (rrr)) via compound: niger (dedup in "niggerrr")
+2026-05-19T13:56:31.373981202Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Fuckslang" (compound: fuck prefix) via compound: fuck (dedup in "fuckslang")
+2026-05-19T13:56:31.373984619Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Fuckface" (compound: fuck prefix) via compound: fuckface (dedup in "fuckface")
+2026-05-19T13:56:31.373988636Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Choicefuck" (compound: fuck suffix) via compound: fuck (dedup in "choicefuck")
+2026-05-19T13:56:31.373992165Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Assfuck" (compound: fuck suffix) via compound: asfuck (dedup in "assfuck")
+2026-05-19T13:56:31.374004531Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Lotffuck" (compound: fuck suffix) via compound: fuck (dedup in "lotffuck")
+2026-05-19T13:56:31.374010398Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Retarded" (exact slur) via compound: retard (dedup in "retarded")
+2026-05-19T13:56:31.374013181Z [inf]  [SCAN-TEST] ✅ CAUGHT   "niqqer" (q-for-g bypass) via regex: n-word nigger (separator/q-k bypass)
+2026-05-19T13:56:31.374015942Z [inf]  [SCAN-TEST] ✅ CAUGHT   "nikker" (k-for-g bypass) via regex: n-word nigger (separator/q-k bypass)
+2026-05-19T13:56:31.374018885Z [inf]  [SCAN-TEST] ✅ CAUGHT   "n.i.g.g.e.r" (separator bypass) via regex: n-word nigga (separator/q-k bypass)
+2026-05-19T13:56:31.374021780Z [inf]  [SCAN-TEST] ✅ CAUGHT   "phuck" (ph→f bypass) via compound: fuck (dedup in "fuck")
+2026-05-19T13:56:31.374024692Z [inf]  [SCAN-TEST] ✅ CAUGHT   "f.u.c.k.i.n.g" (separator bypass: fucking) via regex: profanity: fuck (separator/symbol bypass)
+2026-05-19T13:56:31.374027786Z [inf]  [SCAN-TEST] ✅ ALLOWED  "Niger" (safe word, correctly not flagged)
+2026-05-19T13:56:31.374031077Z [inf]  [SCAN-TEST] ✅ ALLOWED  "Nigeria" (safe word, correctly not flagged)
+2026-05-19T13:56:31.374034191Z [inf]  [SCAN-TEST] ✅ ALLOWED  "snicker" (safe word, correctly not flagged)
+2026-05-19T13:56:31.375379406Z [inf]  [SCAN-TEST] ✅ ALLOWED  "trigger" (safe word, correctly not flagged)
+2026-05-19T13:56:31.375385239Z [inf]  [SCAN-TEST] ✅ ALLOWED  "flicker" (safe word, correctly not flagged)
+2026-05-19T13:56:31.375387996Z [inf]  [SCAN-TEST] ✅ ALLOWED  "ticker" (safe word, correctly not flagged)
+2026-05-19T13:56:31.375390718Z [inf]  [SCAN-TEST] Result: 19 passed, 0 failed.
+2026-05-19T13:56:31.375394228Z [inf]  [WEEKLY] Running weekly XP reset...
+2026-05-19T13:56:31.375396832Z [inf]  [WEEKLY] Weekly reset scheduler started.
+2026-05-19T13:56:31.375399512Z [inf]  [LOWO] Cron started (lottery + events).
+2026-05-19T13:56:31.563386641Z [inf]  [LOWO] Auto-synced 139 application emoji(s) on startup.
+2026-05-19T13:56:32.051981711Z [inf]  Starting Container
+2026-05-19T13:56:32.466041360Z [inf]  [WEEKLY] Reset weekly XP for guild 1479910330669990025
+2026-05-19T13:56:34.081858497Z [inf]  Stopping Container
+2026-05-19T13:56:39.874337961Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/discord-bot@0.0.0 start: `tsx src/index.ts`
+2026-05-19T13:56:39.874345278Z [inf]  Command failed with signal "SIGTERM"
+2026-05-19T13:56:52.467304441Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:56:52.467308037Z [err]    message: 'Due to heavy demand, for requests over 576x576 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:56:52.467312618Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:56:52.467316201Z [err]  }
+2026-05-19T13:56:52.467319922Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:56:52.467323356Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:56:52.467326790Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:56:52.467329901Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:329:16)
+2026-05-19T13:57:12.488384609Z [err]    message: 'Due to heavy demand, for requests over 576x576 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:57:12.488392423Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:57:12.488397176Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:57:12.488399343Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:57:12.488402706Z [err]  }
+2026-05-19T13:57:12.488407908Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:57:12.488412225Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:57:12.488417875Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:57:32.252412565Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:57:32.252417094Z [err]    message: 'Due to heavy demand, for requests over 764x764 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:57:32.252420198Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:57:32.252423386Z [err]  }
+2026-05-19T13:57:32.252426466Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:57:32.252429410Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:57:32.252432512Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:57:32.252435239Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:57:52.259186955Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:57:52.259190465Z [err]    message: 'Due to heavy demand, for requests over 719x719 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:57:52.259194523Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:57:52.259198122Z [err]  }
+2026-05-19T13:57:52.259206639Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:57:52.259211697Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:57:52.259215302Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:57:52.259219205Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:58:12.259635881Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:58:12.259636185Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:58:12.259644447Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:58:12.259645819Z [err]    message: 'Due to heavy demand, for requests over 576x576 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:58:12.259650471Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:58:12.259654479Z [err]  }
+2026-05-19T13:58:12.259658965Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:58:12.259664307Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:58:12.259669644Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:58:12.259673785Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:58:12.259678216Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:58:12.259682422Z [err]    message: 'Due to heavy demand, for requests over 576x576 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:58:12.259686630Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:58:12.259691586Z [err]  }
+2026-05-19T13:58:12.259695428Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:58:12.259699375Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:58:32.263088114Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:58:32.263091706Z [err]    message: 'Due to heavy demand, for requests over 576x576 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:58:32.263094743Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:58:32.263098423Z [err]  }
+2026-05-19T13:58:32.263103288Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:58:32.263106646Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:58:32.263109937Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:58:32.263114226Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:58:52.265351134Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:58:52.265354414Z [err]    message: 'Due to heavy demand, for requests over 656x656 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:58:52.265357273Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:58:52.265360216Z [err]  }
+2026-05-19T13:58:52.265363068Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:58:52.265365969Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:58:52.265368792Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:58:52.265371610Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T13:58:56.344271088Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T13:58:56.344274817Z [err]    message: 'Due to heavy demand, for requests over 722x722 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T13:58:56.344278251Z [err]    rc: 'KudosUpfront'
+2026-05-19T13:58:56.344282097Z [err]  }
+2026-05-19T13:58:56.344286222Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T13:58:56.344289848Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T13:58:56.344293448Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T13:58:56.344296941Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:00:06.293824621Z [inf]  Starting Container
+2026-05-19T14:00:07.089556825Z [inf]  
+2026-05-19T14:00:07.089559315Z [inf]  > @workspace/discord-bot@0.0.0 start /app/artifacts/discord-bot
+2026-05-19T14:00:07.089575175Z [inf]  > tsx src/index.ts
+2026-05-19T14:00:07.089581275Z [inf]  
+2026-05-19T14:00:08.095318727Z [inf]  [PERSISTENCE] DATABASE_URL not set — using local files (data will be lost on redeploy).
+2026-05-19T14:00:08.104638677Z [inf]  [KEEP-ALIVE] HTTP server running on port 8080
+2026-05-19T14:00:08.776296813Z [inf]  [READY] Logged in as Last Stand Management#0533
+2026-05-19T14:00:08.776299843Z [inf]  [READY] Guilds in cache: 1
+2026-05-19T14:00:09.165254029Z [inf]  [READY] REST connection pre-warmed.
+2026-05-19T14:00:09.304152182Z [inf]  [READY] Cleared all global application commands (using guild-only registration).
+2026-05-19T14:00:09.665220368Z [err]  [ERROR] Failed to set guild commands for 1479910330669990025: DiscordAPIError[30032]: Maximum number of application commands reached (100).
+2026-05-19T14:00:09.665225978Z [err]      at handleErrors (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/Shared.ts:148:10)
+2026-05-19T14:00:09.665229658Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:00:09.665234128Z [err]      at async SequentialHandler.runRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:417:20)
+2026-05-19T14:00:09.665239158Z [err]      at async SequentialHandler.queueRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:169:11)
+2026-05-19T14:00:09.665242698Z [err]      at async _REST.request (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/REST.ts:210:20)
+2026-05-19T14:00:09.665246758Z [err]      at async Client.<anonymous> (/app/artifacts/discord-bot/src/index.ts:536:9) {
+2026-05-19T14:00:09.665250228Z [err]    requestBody: {
+2026-05-19T14:00:09.665253668Z [err]      files: undefined,
+2026-05-19T14:00:09.665257078Z [err]      json: [
+2026-05-19T14:00:09.665260718Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665264418Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665268628Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665272178Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665275698Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665279198Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665283318Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665950646Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665957306Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665962306Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665967046Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665970896Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665975976Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665979836Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665983556Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665986886Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665990736Z [err]        [Object], [Object], [Object], [Object],
+2026-05-19T14:00:09.665993996Z [err]        ... 10 more items
+2026-05-19T14:00:09.665997406Z [err]      ]
+2026-05-19T14:00:09.666000776Z [err]    },
+2026-05-19T14:00:09.666004006Z [err]    rawError: {
+2026-05-19T14:00:09.666007796Z [err]      message: 'Maximum number of application commands reached (100).',
+2026-05-19T14:00:09.666011726Z [err]      code: 30032
+2026-05-19T14:00:09.666015746Z [err]    },
+2026-05-19T14:00:09.666019686Z [err]    code: 30032,
+2026-05-19T14:00:09.666022976Z [err]    status: 400,
+2026-05-19T14:00:09.666026396Z [err]    method: 'PUT',
+2026-05-19T14:00:09.666029256Z [err]    url: 'https://discord.com/api/v10/applications/1492904186264813669/guilds/1479910330669990025/commands'
+2026-05-19T14:00:09.666037936Z [err]  }
+2026-05-19T14:00:09.666042456Z [inf]  [READY] Kill leaderboard refreshed.
+2026-05-19T14:00:09.666046776Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Niggeer" (extended vowel (ee)) via compound: niger (dedup in "niggeer")
+2026-05-19T14:00:09.666357664Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Niggerrr" (extended consonant (rrr)) via compound: niger (dedup in "niggerrr")
+2026-05-19T14:00:09.666369064Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Fuckslang" (compound: fuck prefix) via compound: fuck (dedup in "fuckslang")
+2026-05-19T14:00:09.666373684Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Fuckface" (compound: fuck prefix) via compound: fuckface (dedup in "fuckface")
+2026-05-19T14:00:09.666379474Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Choicefuck" (compound: fuck suffix) via compound: fuck (dedup in "choicefuck")
+2026-05-19T14:00:09.666383484Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Assfuck" (compound: fuck suffix) via compound: asfuck (dedup in "assfuck")
+2026-05-19T14:00:09.666387374Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Lotffuck" (compound: fuck suffix) via compound: fuck (dedup in "lotffuck")
+2026-05-19T14:00:09.666390694Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Retarded" (exact slur) via compound: retard (dedup in "retarded")
+2026-05-19T14:00:09.666394794Z [inf]  [SCAN-TEST] ✅ CAUGHT   "niqqer" (q-for-g bypass) via regex: n-word nigger (separator/q-k bypass)
+2026-05-19T14:00:09.666398204Z [inf]  [SCAN-TEST] ✅ CAUGHT   "nikker" (k-for-g bypass) via regex: n-word nigger (separator/q-k bypass)
+2026-05-19T14:00:09.666401284Z [inf]  [SCAN-TEST] ✅ CAUGHT   "n.i.g.g.e.r" (separator bypass) via regex: n-word nigga (separator/q-k bypass)
+2026-05-19T14:00:09.666404834Z [inf]  [SCAN-TEST] ✅ CAUGHT   "phuck" (ph→f bypass) via compound: fuck (dedup in "fuck")
+2026-05-19T14:00:09.666408224Z [inf]  [SCAN-TEST] ✅ CAUGHT   "f.u.c.k.i.n.g" (separator bypass: fucking) via regex: profanity: fuck (separator/symbol bypass)
+2026-05-19T14:00:09.666411634Z [inf]  [SCAN-TEST] ✅ ALLOWED  "Niger" (safe word, correctly not flagged)
+2026-05-19T14:00:09.666419554Z [inf]  [SCAN-TEST] ✅ ALLOWED  "Nigeria" (safe word, correctly not flagged)
+2026-05-19T14:00:09.666423214Z [inf]  [SCAN-TEST] ✅ ALLOWED  "snicker" (safe word, correctly not flagged)
+2026-05-19T14:00:09.666943962Z [inf]  [SCAN-TEST] ✅ ALLOWED  "trigger" (safe word, correctly not flagged)
+2026-05-19T14:00:09.666946692Z [inf]  [SCAN-TEST] ✅ ALLOWED  "flicker" (safe word, correctly not flagged)
+2026-05-19T14:00:09.666949382Z [inf]  [SCAN-TEST] ✅ ALLOWED  "ticker" (safe word, correctly not flagged)
+2026-05-19T14:00:09.666952182Z [inf]  [SCAN-TEST] Result: 19 passed, 0 failed.
+2026-05-19T14:00:09.666955332Z [inf]  [WEEKLY] Running weekly XP reset...
+2026-05-19T14:00:09.666958472Z [inf]  [WEEKLY] Weekly reset scheduler started.
+2026-05-19T14:00:09.666961512Z [inf]  [LOWO] Cron started (lottery + events).
+2026-05-19T14:00:09.934217386Z [inf]  [LOWO] Auto-synced 139 application emoji(s) on startup.
+2026-05-19T14:00:10.418493517Z [inf]  [WEEKLY] Reset weekly XP for guild 1479910330669990025
+2026-05-19T14:00:11.862312162Z [err]  [MEWO AI] imagine submit error: {"message":"Due to heavy demand, for requests over 691x691 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 11.12 kudos to fulfil.","rc":"KudosUpfront"}
+2026-05-19T14:00:11.862314752Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T14:00:11.862317062Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:427:13)
+2026-05-19T14:00:11.862319602Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:00:11.862323622Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:00:16.366244547Z [err]  [MEWO AI] imagine submit error: {
+2026-05-19T14:00:16.366249492Z [err]    message: 'Due to heavy demand, for requests over 691x691 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 22.65 kudos to fulfil.',
+2026-05-19T14:00:16.366253956Z [err]    rc: 'KudosUpfront'
+2026-05-19T14:00:16.366261873Z [err]  }
+2026-05-19T14:00:16.366265587Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T14:00:16.366269330Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:428:13)
+2026-05-19T14:00:16.366273231Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:00:16.366277066Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:00:16.378906027Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/discord-bot@0.0.0 start: `tsx src/index.ts`
+2026-05-19T14:00:16.378911239Z [inf]  Command failed with signal "SIGTERM"
+2026-05-19T14:00:19.011165211Z [inf]  Stopping Container
+2026-05-19T14:00:41.835095281Z [err]  [MEWO AI] imagine submit error: {"message":"Due to heavy demand, for requests over 691x691 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 11.12 kudos to fulfil.","rc":"KudosUpfront"}
+2026-05-19T14:00:41.835098531Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T14:00:41.835102281Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:427:13)
+2026-05-19T14:00:41.835105551Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:00:41.835109341Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:00:41.835113481Z [err]  [MEWO AI] imagine submit error: {"message":"Due to heavy demand, for requests over 691x691 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 11.12 kudos to fulfil.","rc":"KudosUpfront"}
+2026-05-19T14:00:41.835116411Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T14:00:41.835119421Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:427:13)
+2026-05-19T14:00:41.835122541Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:00:41.835125511Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:03:52.256840289Z [err]  [MEWO AI] imagine submit error: {"message":"Due to heavy demand, for requests over 576x576 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 11.12 kudos to fulfil.","rc":"KudosUpfront"}
+2026-05-19T14:03:52.256845039Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T14:03:52.256849799Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:427:13)
+2026-05-19T14:03:52.256853419Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:03:52.256857429Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:329:16)
+2026-05-19T14:04:22.305127290Z [err]  [MEWO AI] imagine submit error: {"message":"Due to heavy demand, for requests over 612x612 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 11.12 kudos to fulfil.","rc":"KudosUpfront"}
+2026-05-19T14:04:22.305132360Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T14:04:22.305135650Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:427:13)
+2026-05-19T14:04:22.305138440Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:04:22.305141210Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:329:16)
+2026-05-19T14:04:52.381003157Z [err]  [MEWO AI] imagine submit error: {"message":"Due to heavy demand, for requests over 587x587 or over 50 steps (10 steps for LCM work, 30 steps for Stable Cascade, and half those steps for k_heun, dpmpp_sde, and dpm_2*) the client needs to already have the required kudos. This request requires 11.12 kudos to fulfil.","rc":"KudosUpfront"}
+2026-05-19T14:04:52.381015287Z [err]  [MEWO AI] imagine error: Error: submit failed
+2026-05-19T14:04:52.381024887Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:427:13)
+2026-05-19T14:04:52.381029557Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:04:52.381033607Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:05:01.698429476Z [inf]  Starting Container
+2026-05-19T14:05:02.383808521Z [inf]  
+2026-05-19T14:05:02.383815863Z [inf]  > @workspace/discord-bot@0.0.0 start /app/artifacts/discord-bot
+2026-05-19T14:05:02.383821780Z [inf]  > tsx src/index.ts
+2026-05-19T14:05:02.383827934Z [inf]  
+2026-05-19T14:05:03.389454219Z [inf]  [PERSISTENCE] DATABASE_URL not set — using local files (data will be lost on redeploy).
+2026-05-19T14:05:03.389457206Z [inf]  [KEEP-ALIVE] HTTP server running on port 8080
+2026-05-19T14:05:04.413008563Z [inf]  [READY] Logged in as Last Stand Management#0533
+2026-05-19T14:05:04.413012228Z [inf]  [READY] Guilds in cache: 1
+2026-05-19T14:05:04.413015097Z [inf]  [READY] REST connection pre-warmed.
+2026-05-19T14:05:04.553959829Z [inf]  [READY] Cleared all global application commands (using guild-only registration).
+2026-05-19T14:05:06.444327454Z [err]  [ERROR] Failed to set guild commands for 1479910330669990025: DiscordAPIError[30032]: Maximum number of application commands reached (100).
+2026-05-19T14:05:06.444330134Z [err]      at handleErrors (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/Shared.ts:148:10)
+2026-05-19T14:05:06.444332850Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:05:06.444335793Z [err]      at async SequentialHandler.runRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:417:20)
+2026-05-19T14:05:06.444338526Z [err]      at async SequentialHandler.queueRequest (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/handlers/SequentialHandler.ts:169:11)
+2026-05-19T14:05:06.444341610Z [err]      at async _REST.request (/app/node_modules/.pnpm/@discordjs+rest@2.6.1/node_modules/@discordjs/rest/src/lib/REST.ts:210:20)
+2026-05-19T14:05:06.444344269Z [err]      at async Client.<anonymous> (/app/artifacts/discord-bot/src/index.ts:536:9) {
+2026-05-19T14:05:06.444346874Z [err]    requestBody: {
+2026-05-19T14:05:06.444349788Z [err]      files: undefined,
+2026-05-19T14:05:06.444352301Z [err]      json: [
+2026-05-19T14:05:06.444354989Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.444357708Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.444360960Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.444363760Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.444366244Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.444368914Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.444371409Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445621805Z [err]    url: 'https://discord.com/api/v10/applications/1492904186264813669/guilds/1479910330669990025/commands'
+2026-05-19T14:05:06.445627005Z [err]  }
+2026-05-19T14:05:06.445627351Z [err]      message: 'Maximum number of application commands reached (100).',
+2026-05-19T14:05:06.445632542Z [err]      code: 30032
+2026-05-19T14:05:06.445633479Z [inf]  [READY] Kill leaderboard refreshed.
+2026-05-19T14:05:06.445639069Z [err]    },
+2026-05-19T14:05:06.445640301Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Niggeer" (extended vowel (ee)) via compound: niger (dedup in "niggeer")
+2026-05-19T14:05:06.445643085Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445644658Z [err]    code: 30032,
+2026-05-19T14:05:06.445649270Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445650700Z [err]    status: 400,
+2026-05-19T14:05:06.445654120Z [err]    method: 'PUT',
+2026-05-19T14:05:06.445656683Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445660145Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445663180Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445666390Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445669837Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445673195Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445676251Z [err]        [Object], [Object], [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445680054Z [err]        [Object], [Object], [Object], [Object],
+2026-05-19T14:05:06.445683383Z [err]        ... 10 more items
+2026-05-19T14:05:06.445686770Z [err]      ]
+2026-05-19T14:05:06.445690675Z [err]    },
+2026-05-19T14:05:06.445694576Z [err]    rawError: {
+2026-05-19T14:05:06.447641872Z [inf]  [SCAN-TEST] ✅ CAUGHT   "phuck" (ph→f bypass) via compound: fuck (dedup in "fuck")
+2026-05-19T14:05:06.447646702Z [inf]  [SCAN-TEST] ✅ CAUGHT   "f.u.c.k.i.n.g" (separator bypass: fucking) via regex: profanity: fuck (separator/symbol bypass)
+2026-05-19T14:05:06.447650410Z [inf]  [SCAN-TEST] ✅ ALLOWED  "Niger" (safe word, correctly not flagged)
+2026-05-19T14:05:06.447655055Z [inf]  [SCAN-TEST] ✅ ALLOWED  "Nigeria" (safe word, correctly not flagged)
+2026-05-19T14:05:06.447658381Z [inf]  [SCAN-TEST] ✅ ALLOWED  "snicker" (safe word, correctly not flagged)
+2026-05-19T14:05:06.447664169Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Niggerrr" (extended consonant (rrr)) via compound: niger (dedup in "niggerrr")
+2026-05-19T14:05:06.447667449Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Fuckslang" (compound: fuck prefix) via compound: fuck (dedup in "fuckslang")
+2026-05-19T14:05:06.447670624Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Fuckface" (compound: fuck prefix) via compound: fuckface (dedup in "fuckface")
+2026-05-19T14:05:06.447673747Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Choicefuck" (compound: fuck suffix) via compound: fuck (dedup in "choicefuck")
+2026-05-19T14:05:06.447676703Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Assfuck" (compound: fuck suffix) via compound: asfuck (dedup in "assfuck")
+2026-05-19T14:05:06.447679938Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Lotffuck" (compound: fuck suffix) via compound: fuck (dedup in "lotffuck")
+2026-05-19T14:05:06.447683152Z [inf]  [SCAN-TEST] ✅ CAUGHT   "Retarded" (exact slur) via compound: retard (dedup in "retarded")
+2026-05-19T14:05:06.447689471Z [inf]  [SCAN-TEST] ✅ CAUGHT   "niqqer" (q-for-g bypass) via regex: n-word nigger (separator/q-k bypass)
+2026-05-19T14:05:06.447692788Z [inf]  [SCAN-TEST] ✅ CAUGHT   "nikker" (k-for-g bypass) via regex: n-word nigger (separator/q-k bypass)
+2026-05-19T14:05:06.447695781Z [inf]  [SCAN-TEST] ✅ CAUGHT   "n.i.g.g.e.r" (separator bypass) via regex: n-word nigga (separator/q-k bypass)
+2026-05-19T14:05:06.449960788Z [inf]  [SCAN-TEST] ✅ ALLOWED  "trigger" (safe word, correctly not flagged)
+2026-05-19T14:05:06.449963769Z [inf]  [SCAN-TEST] ✅ ALLOWED  "flicker" (safe word, correctly not flagged)
+2026-05-19T14:05:06.449968267Z [inf]  [SCAN-TEST] ✅ ALLOWED  "ticker" (safe word, correctly not flagged)
+2026-05-19T14:05:06.449972373Z [inf]  [SCAN-TEST] Result: 19 passed, 0 failed.
+2026-05-19T14:05:06.449975893Z [inf]  [WEEKLY] Running weekly XP reset...
+2026-05-19T14:05:06.449979014Z [inf]  [WEEKLY] Weekly reset scheduler started.
+2026-05-19T14:05:06.449982081Z [inf]  [LOWO] Cron started (lottery + events).
+2026-05-19T14:05:06.553749212Z [inf]  [LOWO] Auto-synced 139 application emoji(s) on startup.
+2026-05-19T14:05:07.419263548Z [inf]  [WEEKLY] Reset weekly XP for guild 1479910330669990025
+2026-05-19T14:05:10.871555435Z [inf]  Stopping Container
+2026-05-19T14:05:12.335404225Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/discord-bot@0.0.0 start: `tsx src/index.ts`
+2026-05-19T14:05:12.335417035Z [inf]  Command failed with signal "SIGTERM"
+2026-05-19T14:07:37.217029866Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T14:07:37.217033521Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:404:24)
+2026-05-19T14:07:37.217037359Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:07:37.217040749Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:329:16)
+2026-05-19T14:07:57.219144915Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T14:07:57.219147935Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:404:24)
+2026-05-19T14:07:57.219151068Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:07:57.219154969Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)
+2026-05-19T14:08:03.756110960Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T14:08:03.756116023Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:404:24)
+2026-05-19T14:08:03.756357120Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:08:03.756362868Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:329:16)
+2026-05-19T14:08:12.298099347Z [err]  [MEWO AI] imagine error: Error: fetch 402
+2026-05-19T14:08:12.298104378Z [err]      at cmdGrokImagine (/app/artifacts/discord-bot/src/mewo/modules/ai.ts:404:24)
+2026-05-19T14:08:12.298110577Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-19T14:08:12.298116697Z [err]      at async handleMewoCommand (/app/artifacts/discord-bot/src/mewo/router.ts:500:9)

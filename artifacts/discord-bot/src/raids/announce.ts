@@ -100,7 +100,7 @@ function buildRaidEmbed(opts: RaidEmbedOptions): EmbedBuilder {
       iconURL: guildIconUrl ?? undefined,
     })
     .setDescription(
-      `⟨ ⚔ ⟩ 🚨 RAID ALERT — DEPLOY NOW\n` +
+      `# ⟨ ⚔ ⟩ 🚨 RAID ALERT — DEPLOY NOW\n` +
         `\`\`\`ansi\n\u001b[1;34m${headline}\u001b[0m\n\`\`\`\n` +
         `⚔️  Difficulty\n` +
         `\`\`\`fix\n${difficulty}\n\`\`\`\n` +

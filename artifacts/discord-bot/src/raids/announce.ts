@@ -176,7 +176,7 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
         new EmbedBuilder()
           .setColor(0xed4245)
           .setDescription("❌ Couldn't DM you — please enable DMs from server members.")
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
   }
@@ -276,7 +276,7 @@ export async function handleRaidCallWhitelist(message: Message): Promise<void> {
               ? `✅ Removed <@${targetUser.id}> from the raid call whitelist.`
               : `❌ <@${targetUser.id}> is not on the whitelist.`,
           )
-          .setFooter({ text: "LS • raid" }),
+          .setFooter({ text: "tell them to pay eon🙏• raid" }),
       ],
     });
   }

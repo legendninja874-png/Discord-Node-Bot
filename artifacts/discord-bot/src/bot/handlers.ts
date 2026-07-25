@@ -21,7 +21,7 @@ import {
   executeRemoveKillPlayer,
 } from "../killLeaderboard/commands.js";
 import { executeStartRaid, executeEndRaid } from "../raids/index.js";
-import { executeRaidAnnounce } from "../raids/announce.js";
+import { executeRaidCall } from "../raids/announce.js";
 import { executeTraining } from "../training/index.js";
 import {
   executeAnnounce,
@@ -149,7 +149,11 @@ export function buildSlashHandlers(
     movek: (i) => executeMoveKillPlayer(i, client),
     startraid: executeStartRaid,
     endraid: executeEndRaid,
-    raidannounce: executeRaidAnnounce,
+    raid: (i) => {
+      const sub = i.options.getSubcommand(false);
+      if (sub === "call") return executeRaidCall(i);
+      return Promise.resolve();
+    },
     training: executeTraining,
     announce: executeAnnounce,
     warn: executeWarn,

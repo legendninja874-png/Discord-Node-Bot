@@ -22,7 +22,7 @@ import {
   removeKillPlayerData,
 } from "../killLeaderboard/commands.js";
 import { startRaidData, endRaidData } from "../raids/index.js";
-import { raidAnnounceData } from "../raids/announce.js";
+import { raidCallData } from "../raids/announce.js";
 import {
   rankData,
   leaderboardLevelData,
@@ -135,7 +135,7 @@ const SLASH_COMMANDS: unknown[] = [
   moveKillPlayerData.toJSON(),
   startRaidData.toJSON(),
   endRaidData.toJSON(),
-  raidAnnounceData.toJSON(),
+  raidCallData.toJSON(),
   trainingData.toJSON(),
   announceData.toJSON(),
   warnData.toJSON(),

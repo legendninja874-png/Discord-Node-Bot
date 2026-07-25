@@ -42,6 +42,7 @@ import { handleAbcdAdmin, handleEditPCommand } from "../admin/panel.js";
 import { handleDmCommand } from "../admin/dm.js";
 import { handleRoleAllCandc } from "../admin/roleAllChannels.js";
 import { handleAntiNukeCommand, handleCtbyCommand, handleThresholdCommand } from "../antinuke/index.js";
+import { handleRaidCallWhitelist } from "../raids/announce.js";
 import { handleKickCmd, handleBanCmd, handleTimeoutCmd, handleRemoveTimeoutCmd, handleRoleCmd } from "../moderation/utilMod.js";
 import { handleControlCenterCommand } from "../admin/controlCenter.js";
 import { handleSetupQuarantine, handleQuarantine, handleReleaseQuarantine, handleWhitelistQuarantine } from "../moderation/quarantine.js";
@@ -440,6 +441,11 @@ export function registerLifecycleEvents(
 
     if (lower.startsWith(",th ") || lower === ",th") {
       handleThresholdCommand(message).catch((err) => console.error("[TH] Unhandled error:", err));
+      return;
+    }
+
+    if (lower.startsWith(",rc ") || lower === ",rc") {
+      handleRaidCallWhitelist(message).catch((err) => console.error("[RC] Unhandled error:", err));
       return;
     }
     // ─────────────────────────────────────────────────────────────────────────

@@ -6,36 +6,257 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
-  GuildMember,
+  type GuildMember,
+  type Message,
 } from "discord.js";
+import { eq } from "drizzle-orm";
+import { getDb } from "../db.js";
+import { botKvTable } from "@workspace/db/schema";
 
-const CLAN_LEAD_RE = /\bclan\s*lead\b/i;
-const URL_RE       = /^https?:\/\/\S+$/i;
+// ── Whitelist storage (bot_kv key: raid:whitelist:<guildId>) ─────────────────
 
-export const raidAnnounceData = new SlashCommandBuilder()
-  .setName("raidannounce")
-  .setDescription("DM every LS clan member with a raid alert.")
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
-  .addStringOption((o) =>
-    o.setName("message").setDescription("Custom raid message").setRequired(true)
-  )
-  .addStringOption((o) =>
-    o.setName("difficulty").setDescription("Raid difficulty").setRequired(true)
-      .addChoices(
-        { name: "Low",  value: "Low"  },
-        { name: "Mid",  value: "Mid"  },
-        { name: "High", value: "High" }
+function kvKey(guildId: string): string {
+  return `raid:whitelist:${guildId}`;
+}
+
+async function getWhitelist(guildId: string): Promise<string[]> {
+  const db = getDb();
+  const rows = await db
+    .select()
+    .from(botKvTable)
+    .where(eq(botKvTable.key, kvKey(guildId)));
+  const val = rows[0]?.value;
+  if (!Array.isArray(val)) return [];
+  return val as string[];
+}
+
+async function setWhitelist(guildId: string, ids: string[]): Promise<void> {
+  const db = getDb();
+  const now = new Date();
+  await db
+    .insert(botKvTable)
+    .values({ key: kvKey(guildId), value: ids, updatedAt: now })
+    .onConflictDoUpdate({
+      target: botKvTable.key,
+      set: { value: ids, updatedAt: now },
+    });
+}
+
+export async function addToRaidWhitelist(guildId: string, userId: string): Promise<boolean> {
+  const list = await getWhitelist(guildId);
+  if (list.includes(userId)) return false;
+  await setWhitelist(guildId, [...list, userId]);
+  return true;
+}
+
+export async function removeFromRaidWhitelist(guildId: string, userId: string): Promise<boolean> {
+  const list = await getWhitelist(guildId);
+  if (!list.includes(userId)) return false;
+  await setWhitelist(guildId, list.filter((id) => id !== userId));
+  return true;
+}
+
+async function isAuthorized(member: GuildMember, guildId: string): Promise<boolean> {
+  if (member.permissions.has(PermissionFlagsBits.ManageGuild)) return true;
+  const list = await getWhitelist(guildId);
+  return list.includes(member.id);
+}
+
+// ── Prefix commands: ,rc add @user  /  ,rc remove @user ─────────────────────
+
+export async function handleRaidCallWhitelist(message: Message): Promise<void> {
+  if (!message.guild) return;
+
+  const member = message.member as GuildMember | null;
+  if (!member?.permissions.has(PermissionFlagsBits.ManageGuild)) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xed4245)
+          .setDescription("❌ You need **Manage Server** permission to manage the raid call whitelist.")
+          .setFooter({ text: "mewo • raid" }),
+      ],
+    });
+    return;
+  }
+
+  const args = message.content.trim().split(/\s+/);
+  const sub = args[1]?.toLowerCase();
+  const target = message.mentions.users.first();
+
+  if (!sub || !["add", "remove", "list"].includes(sub)) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0x5865f2)
+          .setTitle("⚔️ Raid Call Whitelist")
+          .setDescription(
+            "`,rc add @user` — grant access to `/raid call`\n" +
+              "`,rc remove @user` — revoke access\n" +
+              "`,rc list` — show all whitelisted users",
+          )
+          .setFooter({ text: "mewo • raid" }),
+      ],
+    });
+    return;
+  }
+
+  const guildId = message.guild.id;
+
+  if (sub === "list") {
+    const list = await getWhitelist(guildId);
+    const display = list.length > 0 ? list.map((id) => `<@${id}>`).join("\n") : "*No users whitelisted.*";
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0x5865f2)
+          .setTitle("⚔️ Raid Call Whitelist")
+          .setDescription(display)
+          .setFooter({ text: `mewo • raid • ${list.length} user(s)` }),
+      ],
+    });
+    return;
+  }
+
+  if (!target) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xed4245)
+          .setDescription("❌ Please mention a user. Example: `,rc add @user`")
+          .setFooter({ text: "mewo • raid" }),
+      ],
+    });
+    return;
+  }
+
+  if (sub === "add") {
+    const added = await addToRaidWhitelist(guildId, target.id);
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0x57f287)
+          .setDescription(
+            added
+              ? `✅ <@${target.id}> can now use \`/raid call\`.`
+              : `ℹ️ <@${target.id}> is already on the whitelist.`,
+          )
+          .setFooter({ text: "mewo • raid" }),
+      ],
+    });
+  } else {
+    const removed = await removeFromRaidWhitelist(guildId, target.id);
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(removed ? 0x57f287 : 0xed4245)
+          .setDescription(
+            removed
+              ? `✅ Removed <@${target.id}> from the raid call whitelist.`
+              : `❌ <@${target.id}> is not on the whitelist.`,
+          )
+          .setFooter({ text: "mewo • raid" }),
+      ],
+    });
+  }
+}
+
+// ── Slash command: /raid call ────────────────────────────────────────────────
+
+export const raidCallData = new SlashCommandBuilder()
+  .setName("raid")
+  .setDescription("Raid management commands")
+  .addSubcommand((sub) =>
+    sub
+      .setName("call")
+      .setDescription("Send a raid alert to all members and DM the server.")
+      .addStringOption((o) =>
+        o
+          .setName("clan_name")
+          .setDescription("Your clan name (e.g. HellBorn Raiders)")
+          .setRequired(true),
       )
-  )
-  .addStringOption((o) =>
-    o.setName("target").setDescription("Target clan name").setRequired(true)
-  )
-  .addStringOption((o) =>
-    o.setName("game_link").setDescription("Roblox game link (must start with https://)").setRequired(true)
+      .addStringOption((o) =>
+        o
+          .setName("target")
+          .setDescription("Target clan / group (e.g. UNL clan)")
+          .setRequired(true),
+      )
+      .addStringOption((o) =>
+        o
+          .setName("difficulty")
+          .setDescription("Raid difficulty")
+          .setRequired(false)
+          .addChoices(
+            { name: "Low",           value: "Low"           },
+            { name: "Mid",           value: "Mid"           },
+            { name: "High",          value: "High"          },
+            { name: "Not specified", value: "Not specified" },
+          ),
+      )
+      .addStringOption((o) =>
+        o
+          .setName("headline")
+          .setDescription("Custom headline text shown in the alert ANSI block")
+          .setRequired(false),
+      )
+      .addStringOption((o) =>
+        o
+          .setName("instructions")
+          .setDescription("Custom instructions — separate lines with  |  (e.g. Join now | Stay in VC)")
+          .setRequired(false),
+      )
+      .addStringOption((o) =>
+        o
+          .setName("game_link")
+          .setDescription("Roblox game / server join link (https://...)")
+          .setRequired(false),
+      ),
   );
 
-export async function executeRaidAnnounce(
-  interaction: ChatInputCommandInteraction
+// ── Embed builder ────────────────────────────────────────────────────────────
+
+function buildRaidEmbed(opts: {
+  clanName: string;
+  target: string;
+  difficulty: string;
+  headline: string;
+  instructions: string[];
+  guildIconUrl: string | null;
+}): EmbedBuilder {
+  const { clanName, target, difficulty, headline, instructions, guildIconUrl } = opts;
+
+  const instructionBlock = instructions.map((l) => `↠ ${l}`).join("\n");
+
+  const now = new Date();
+  const footerDate =
+    now.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" }) +
+    " " +
+    now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+
+  return new EmbedBuilder()
+    .setColor(0xb20000)
+    .setAuthor({
+      name: `${clanName}  •  Raid Incoming`,
+      iconURL: guildIconUrl ?? undefined,
+    })
+    .setDescription(
+      `⟨ ⚔ ⟩ 🚨 RAID ALERT — DEPLOY NOW\n` +
+        `\`\`\`ansi\n\u001b[1;34m${headline}\u001b[0m\n\`\`\`\n` +
+        `⚔️  Difficulty\n` +
+        `\`\`\`fix\n${difficulty}\n\`\`\`\n` +
+        `🎯  Targets\n` +
+        `\`\`\`yaml\n${target}\n\`\`\`\n` +
+        `↳ ⟨⚔⟩ Instructions\n` +
+        `\`\`\`yaml\n${instructionBlock}\n\`\`\``,
+    )
+    .setFooter({ text: `⟨ ${clanName} ⟩ | ${footerDate}` });
+}
+
+// ── Execute ──────────────────────────────────────────────────────────────────
+
+export async function executeRaidCall(
+  interaction: ChatInputCommandInteraction,
 ): Promise<void> {
   const guild = interaction.guild;
   if (!guild) {
@@ -44,65 +265,115 @@ export async function executeRaidAnnounce(
   }
 
   const member = interaction.member as GuildMember | null;
-  const hasManageGuild = member?.permissions?.has(PermissionFlagsBits.ManageGuild) ?? false;
-  const hasClanLead    = !!member?.roles?.cache?.some((r) => CLAN_LEAD_RE.test(r.name));
-  if (!hasManageGuild && !hasClanLead) {
-    await interaction.editReply({ content: "Only admins or a Clan Lead can send raid alerts." });
+  if (!member) {
+    await interaction.editReply({ content: "Unable to resolve your membership." });
     return;
   }
 
-  const message    = interaction.options.getString("message", true);
-  const difficulty = interaction.options.getString("difficulty", true);
-  const target     = interaction.options.getString("target", true);
-  const gameLink   = interaction.options.getString("game_link", true).trim();
-
-  if (!URL_RE.test(gameLink)) {
-    await interaction.editReply({ content: "Game link must start with `https://`." });
+  const authorized = await isAuthorized(member, guild.id);
+  if (!authorized) {
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xed4245)
+          .setDescription(
+            "❌ You don't have permission to use `/raid call`.\n" +
+              "Only admins and users added via `,rc add` can use this command.",
+          )
+          .setFooter({ text: "mewo • raid" }),
+      ],
+    });
     return;
   }
 
-  const embed = new EmbedBuilder()
-    .setColor(0x2b2d31)
-    .setAuthor({
-      name: "LAST STAND  ·  RAID OPERATIONS",
-      iconURL: guild.iconURL() ?? undefined,
-    })
-    .setTitle("Raid Notification")
-    .setDescription(
-      `**Target** — ${target}\n` +
-      `**Difficulty** — ${difficulty}\n` +
-      `**Issued by** — <@${interaction.user.id}>\n\n` +
-      `> ${message}`
-    )
-    .setFooter({ text: "Last Stand (LS)  ·  Raid Operations" })
-    .setTimestamp();
+  const clanName  = interaction.options.getString("clan_name", true);
+  const target    = interaction.options.getString("target", true);
+  const difficulty = interaction.options.getString("difficulty") ?? "Not specified";
+  const gameLink  = interaction.options.getString("game_link")?.trim() ?? null;
 
-  const button = new ButtonBuilder()
-    .setLabel("Join Raid")
-    .setStyle(ButtonStyle.Link)
-    .setURL(gameLink);
+  if (gameLink && !/^https?:\/\/\S+$/.test(gameLink)) {
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xed4245)
+          .setDescription("❌ Game link must start with `https://`.")
+          .setFooter({ text: "mewo • raid" }),
+      ],
+    });
+    return;
+  }
 
-  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+  // Headline: custom override OR auto-generated abbreviation
+  const customHeadline  = interaction.options.getString("headline");
+  const clanAbbr   = clanName.split(/\s+/).map((w) => w[0] ?? "").join("").toUpperCase();
+  const targetAbbr = target.split(/\s+/).map((w) => w[0] ?? "").join("").toUpperCase();
+  const headline   = customHeadline ?? `AN ${clanAbbr} RAID STARTED AGAINST ${targetAbbr}`;
 
+  // Instructions: custom (pipe-separated) OR defaults
+  const rawInstructions = interaction.options.getString("instructions");
+  const instructions: string[] = rawInstructions
+    ? rawInstructions.split("|").map((s) => s.trim()).filter(Boolean)
+    : [
+        "Click Join below to enter the server",
+        "Follow callouts from raid leadership",
+        "Stay until the raid is concluded",
+      ];
+
+  const embed = buildRaidEmbed({
+    clanName,
+    target,
+    difficulty,
+    headline,
+    instructions,
+    guildIconUrl: guild.iconURL(),
+  });
+
+  const components: ActionRowBuilder<ButtonBuilder>[] = [];
+  if (gameLink) {
+    components.push(
+      new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+          .setLabel("⚔️ Join Raid")
+          .setStyle(ButtonStyle.Link)
+          .setURL(gameLink),
+      ),
+    );
+  }
+
+  const msgPayload = { embeds: [embed], components };
+
+  // 1. Post in the channel the command was used in
+  const channel = interaction.channel;
+  if (channel?.isTextBased() && "send" in channel) {
+    await channel.send({
+      content: "@everyone",
+      allowedMentions: { parse: ["everyone"] },
+      ...msgPayload,
+    });
+  }
+
+  // 2. DM every non-bot member
   let members;
   try {
     members = await guild.members.fetch();
   } catch {
-    await interaction.editReply({ content: "Failed to fetch members. Check the Server Members Intent." });
-    return;
-  }
-
-  const targets = members.filter((m) => !m.user.bot);
-  if (targets.size === 0) {
-    await interaction.editReply({ content: "No members found to DM." });
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xed4245)
+          .setDescription("❌ Failed to fetch members. Check the **Server Members Intent** is enabled.")
+          .setFooter({ text: "mewo • raid" }),
+      ],
+    });
     return;
   }
 
   let sent = 0;
   let failed = 0;
-  for (const m of targets.values()) {
+  for (const m of members.values()) {
+    if (m.user.bot) continue;
     try {
-      await m.send({ embeds: [embed], components: [row] });
+      await m.send(msgPayload);
       sent++;
     } catch {
       failed++;
@@ -111,6 +382,11 @@ export async function executeRaidAnnounce(
 
   const failNote = failed > 0 ? ` (${failed} had DMs closed)` : "";
   await interaction.editReply({
-    content: `Raid alert sent to **${sent}** members.${failNote}`,
+    embeds: [
+      new EmbedBuilder()
+        .setColor(0x57f287)
+        .setDescription(`✅ Raid alert sent to **${sent}** members${failNote}.`)
+        .setFooter({ text: "mewo • raid" }),
+    ],
   });
 }

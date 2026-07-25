@@ -100,7 +100,7 @@ function buildRaidEmbed(opts: RaidEmbedOptions): EmbedBuilder {
       iconURL: guildIconUrl ?? undefined,
     })
     .setDescription(
-      `# ⟨ ⚔ ⟩ 🚨 RAID ALERT — DEPLOY NOW\n` +
+      `⟨ ⚔ ⟩ 🚨 RAID ALERT — DEPLOY NOW\n` +
         `\`\`\`ansi\n\u001b[1;34m${headline}\u001b[0m\n\`\`\`\n` +
         `⚔️  Difficulty\n` +
         `\`\`\`fix\n${difficulty}\n\`\`\`\n` +
@@ -140,9 +140,9 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
 
   const embed = buildRaidEmbed({
     clanName: "Last Stand",
-    target: "UNL clan",
-    difficulty: "High",
-    headline: "AN LS RAID STARTED AGAINST UNL",
+    target: "Random ass clan",
+    difficulty: "Null",
+    headline: "AN LS RAID STARTED AGAINST Ramdom ass clan",
     instructions: [
       "Click Join below to enter the server",
       "Follow callouts from raid leadership",
@@ -167,7 +167,7 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
         new EmbedBuilder()
           .setColor(0x57f287)
           .setDescription("✅ Test raid alert sent to your DMs.")
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
   } catch {
@@ -194,7 +194,7 @@ export async function handleRaidCallWhitelist(message: Message): Promise<void> {
         new EmbedBuilder()
           .setColor(0xed4245)
           .setDescription("❌ You need **Manage Server** permission to manage the raid call whitelist.")
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
     return;
@@ -215,7 +215,7 @@ export async function handleRaidCallWhitelist(message: Message): Promise<void> {
               "`,rc remove @user` — revoke access\n" +
               "`,rc list` — show all whitelisted users",
           )
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "they dont pay me • raid" }),
       ],
     });
     return;
@@ -233,7 +233,7 @@ export async function handleRaidCallWhitelist(message: Message): Promise<void> {
           .setColor(0x5865f2)
           .setTitle("⚔️ Raid Call Whitelist")
           .setDescription(display)
-          .setFooter({ text: `mewo • raid • ${list.length} user(s)` }),
+          .setFooter({ text: `EON is UNPAID • raid • ${list.length} user(s)` }),
       ],
     });
     return;
@@ -245,7 +245,7 @@ export async function handleRaidCallWhitelist(message: Message): Promise<void> {
         new EmbedBuilder()
           .setColor(0xed4245)
           .setDescription("❌ Please mention a user. Example: `,rc add @user`")
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
     return;
@@ -262,7 +262,7 @@ export async function handleRaidCallWhitelist(message: Message): Promise<void> {
               ? `✅ <@${targetUser.id}> can now use \`/raid call\`.`
               : `ℹ️ <@${targetUser.id}> is already on the whitelist.`,
           )
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
   } else {
@@ -276,7 +276,7 @@ export async function handleRaidCallWhitelist(message: Message): Promise<void> {
               ? `✅ Removed <@${targetUser.id}> from the raid call whitelist.`
               : `❌ <@${targetUser.id}> is not on the whitelist.`,
           )
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
   }
@@ -294,13 +294,13 @@ export const raidCallData = new SlashCommandBuilder()
       .addStringOption((o) =>
         o
           .setName("clan_name")
-          .setDescription("Your clan name  (e.g. HellBorn Raiders)")
+          .setDescription("Your clan name  (e.g. Last Stand)")
           .setRequired(true),
       )
       .addStringOption((o) =>
         o
           .setName("target")
-          .setDescription("Target clan / group  (e.g. UNL clan)")
+          .setDescription("Target clan / group  (e.g. NIW clan)")
           .setRequired(true),
       )
       .addStringOption((o) =>
@@ -366,7 +366,7 @@ export async function executeRaidCall(
           .setColor(0xed4245)
           .setDescription(
             "❌ You don't have permission to use `/raid call`.\n" +
-              "Only admins and users added via `,rc add` can use this command.",
+              "Only admins and whitelisted users.",
           )
           .setFooter({ text: "mewo • raid" }),
       ],
@@ -386,7 +386,7 @@ export async function executeRaidCall(
         new EmbedBuilder()
           .setColor(0xed4245)
           .setDescription("❌ Game link must start with `https://`.")
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
     return;
@@ -398,7 +398,7 @@ export async function executeRaidCall(
         new EmbedBuilder()
           .setColor(0xed4245)
           .setDescription("❌ Image URL must start with `https://`.")
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "unemployment • raid" }),
       ],
     });
     return;
@@ -467,7 +467,7 @@ export async function executeRaidCall(
           .setDescription(
             "❌ Failed to fetch members. Check the **Server Members Intent** is enabled.",
           )
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
     return;
@@ -491,7 +491,7 @@ export async function executeRaidCall(
       new EmbedBuilder()
         .setColor(0x57f287)
         .setDescription(`✅ Raid alert sent to **${sent}** members${failNote}.`)
-        .setFooter({ text: "mewo • raid" }),
+        .setFooter({ text: "LS • raid" }),
     ],
   });
 }

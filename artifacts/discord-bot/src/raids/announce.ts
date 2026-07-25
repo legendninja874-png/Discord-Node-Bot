@@ -139,10 +139,10 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
   }
 
   const embed = buildRaidEmbed({
-    clanName: "HellBorn Raiders",
+    clanName: "Last Stand",
     target: "UNL clan",
     difficulty: "High",
-    headline: "AN HR RAID STARTED AGAINST UNL",
+    headline: "AN LS RAID STARTED AGAINST UNL",
     instructions: [
       "Click Join below to enter the server",
       "Follow callouts from raid leadership",

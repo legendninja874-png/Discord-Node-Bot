@@ -138,7 +138,7 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
         new EmbedBuilder()
           .setColor(0xed4245)
           .setDescription("❌ Only admins and whitelisted users can use `,test raidcall`.")
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
     return;
@@ -148,7 +148,7 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
     clanName: "Last Stand",
     target: "UNL clan",
     difficulty: "High",
-    headline: "AN LS RAID STARTED AGAINST UNL",
+    headline: "AN LS RAID STARTED AGAINST TEST",
     instructions: [
       "Click Join below to enter the server",
       "Follow callouts from raid leadership",
@@ -173,7 +173,7 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
         new EmbedBuilder()
           .setColor(0x57f287)
           .setDescription("✅ Test raid alert sent to your DMs.")
-          .setFooter({ text: "LS • raid" }),
+          .setFooter({ text: "tell psps to pay eon • raid" }),
       ],
     });
   } catch {
@@ -374,7 +374,7 @@ export async function executeRaidCall(
             "❌ You don't have permission to use `/raid call`.\n" +
               "Only admins and whitelisted users.",
           )
-          .setFooter({ text: "mewo • raid" }),
+          .setFooter({ text: "LS • raid" }),
       ],
     });
     return;

@@ -146,8 +146,8 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
 
   const embed = buildRaidEmbed({
     clanName: "Last Stand",
-    target: "UNL clan",
-    difficulty: "High",
+    target: "Test clan",
+    difficulty: "Not Specified",
     headline: "AN LS RAID STARTED AGAINST TEST",
     instructions: [
       "Click Join below to enter the server",

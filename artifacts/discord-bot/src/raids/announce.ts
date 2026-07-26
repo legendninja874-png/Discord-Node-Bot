@@ -94,15 +94,13 @@ function buildRaidEmbed(opts: RaidEmbedOptions): EmbedBuilder {
     });
 
   const embed = new EmbedBuilder()
-    .setColor(0x1a1c2e)
+    .setColor(0x00bfff)
     .setAuthor({
       name: `${clanName}  •  Raid Incoming`,
       iconURL: guildIconUrl ?? undefined,
     })
-    .setDescription(
-      `⟨ ⚔ ⟩ 🚨 RAID ALERT — DEPLOY NOW\n` +
-        `\`\`\`ansi\n\u001b[1;34m${headline}\u001b[0m\n\`\`\``,
-    )
+    .setTitle(`⟨ ⚔ ⟩ 🚨 RAID ALERT — DEPLOY NOW`)
+    .setDescription(`\`\`\`ansi\n\u001b[1;34m${headline}\u001b[0m\n\`\`\``)
     .addFields(
       {
         name: `⚔️  Difficulty`,
@@ -148,9 +146,9 @@ export async function handleTestRaidCall(message: Message): Promise<void> {
 
   const embed = buildRaidEmbed({
     clanName: "Last Stand",
-    target: "Random ass clan",
-    difficulty: "Null",
-    headline: "AN LS RAID STARTED AGAINST Ramdom ass clan",
+    target: "UNL clan",
+    difficulty: "High",
+    headline: "AN LS RAID STARTED AGAINST UNL",
     instructions: [
       "Click Join below to enter the server",
       "Follow callouts from raid leadership",

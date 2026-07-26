@@ -101,13 +101,21 @@ function buildRaidEmbed(opts: RaidEmbedOptions): EmbedBuilder {
     })
     .setDescription(
       `⟨ ⚔ ⟩ 🚨 RAID ALERT — DEPLOY NOW\n` +
-        `\`\`\`ansi\n\u001b[1;34m${headline}\u001b[0m\n\`\`\`\n` +
-        `⚔️  Difficulty\n` +
-        `\`\`\`fix\n${difficulty}\n\`\`\`\n` +
-        `🎯  Targets\n` +
-        `\`\`\`yaml\n${target}\n\`\`\`\n` +
-        `↳ ⟨⚔⟩ Instructions\n` +
-        `\`\`\`yaml\n${instructionBlock}\n\`\`\``,
+        `\`\`\`ansi\n\u001b[1;34m${headline}\u001b[0m\n\`\`\``,
+    )
+    .addFields(
+      {
+        name: `⚔️  Difficulty`,
+        value: `\`\`\`fix\n${difficulty}\n\`\`\``,
+      },
+      {
+        name: `🎯  Targets`,
+        value: `\`\`\`yaml\n${target}\n\`\`\``,
+      },
+      {
+        name: `↳ ⟨⚔⟩ Instructions`,
+        value: `\`\`\`yaml\n${instructionBlock}\n\`\`\``,
+      },
     )
     .setFooter({
       text: `⟨ ${clanName} ⟩ | ${footerDate}`,

@@ -447,7 +447,7 @@ export async function executePoll(interaction: ChatInputCommandInteraction): Pro
       `${HR}\n\n${optionsText}\n\n${HR}\n*Cast your vote by reacting below.*`
     )
     .setFooter({
-      text: `Poll by ${interaction.user.tag}  ·  Last Stand (LS)`,
+      text: `Poll by ${interaction.user.tag}  ·  Last Stand (LS) pay eon btw`,
       iconURL: interaction.user.displayAvatarURL(),
     })
     .setTimestamp();

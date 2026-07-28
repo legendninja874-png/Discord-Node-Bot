@@ -82,13 +82,33 @@ Dockerfile       ← Railway Docker build
 
 ---
 
-## Important conventions (from MEWO_AGENT_PROMPT.md)
+## Embed design philosophy
 
-- Every bot response must be a **rich embed** (never plain text)
-- Error embeds: color `0xED4245`, description `❌ <message>`
-- Success embeds: color `0x57F287`
-- Info embeds: color `0x5865F2`
-- Footer: always `"mewo • <module>"`
+Every embed must feel like a human sat down and actually wrote it — not a bot templating output. The goal is natural, readable, and clean.
+
+**The feel:**
+- Write like a person, not a system. No robotic phrasing like "Operation completed successfully." Say what happened in plain words.
+- Straight to the point — don't pad with filler, but don't be so terse it feels cold either. Give it some body.
+- Titles should read like something you'd actually say, not a function name.
+- Field names should be short and casual — `"from"` not `"Source User"`, `"when"` not `"Timestamp"`.
+- If there's context worth showing, show it. A one-liner embed for something complex feels lazy.
+
+**What to avoid:**
+- ❌ All-caps field names (`"STATUS"`, `"USER ID"`)
+- ❌ Filler phrases ("Here is the result of your query")
+- ❌ Repeating the command back ("You ran: mewo help")
+- ❌ Walls of fields for simple things — use the description instead
+- ❌ Timestamp on every single embed — only add it when it actually matters
+
+**Colors:**
+- Error: `0xED4245`
+- Success: `0x57F287`
+- Info / neutral: `0x5865F2`
+
+**Footer:** always `"mewo • <module>"` — keep it lowercase and simple.
+
+**Other conventions:**
+- Every bot response must be a rich embed — never plain text
 - All imports use `.js` extension (ES modules)
 
 ## User preferences

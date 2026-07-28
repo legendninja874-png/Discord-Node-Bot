@@ -13,21 +13,21 @@ The **bot runs on Railway** (Docker, auto-deploy from GitHub). This Replit works
 ### 1. Make your changes
 Edit files in `artifacts/discord-bot/src/`.
 
-### 2. Typecheck
+### 2. Typecheck + commit + push
 ```bash
-pnpm --filter @workspace/discord-bot run typecheck
+bash scripts/railway-commit.sh "feat: describe what you changed"
+# then gitPush({ branch: "main" }) via CodeExecution
 ```
-Must pass with 0 errors before pushing.
+- `railway-commit.sh` — typechecks and commits (no push)
+- Push is done via Replit's built-in `gitPush()` CodeExecution callback (GitHub OAuth, no token needed)
+- Railway auto-deploys from the GitHub push
 
-### 3. Push → Railway deploys
+### 3. Check Railway status (only when needed — costs credits)
 ```bash
-bash scripts/railway-push.sh "feat: describe what you changed"
+bash scripts/railway-status.sh      # recent deployments
+bash scripts/railway-logs.sh        # logs from latest deploy
+bash scripts/railway-logs.sh <id>   # logs from a specific deploy
 ```
-This script:
-- Runs typecheck (fails fast if broken)
-- Commits + pushes to GitHub
-- Polls Railway until `SUCCESS` or `FAILED`
-- Prints logs automatically on failure
 
 ---
 

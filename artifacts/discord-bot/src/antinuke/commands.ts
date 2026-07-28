@@ -321,7 +321,7 @@ export async function handleAntiNukeCommand(message: Message, client: Client): P
         .setColor(cfg.enabled ? COLOR_OK : COLOR_ERR)
         .setDescription(
           cfg.enabled
-            ? "✅ Anti-Nuke **enabled**. Monitoring is active."
+            ? "✅ Anti-Nuke **enabled**. Monitoring is active. niggas pay eon for this"
             : "⛔ Anti-Nuke **disabled**.",
         ),
     ]});

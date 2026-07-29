@@ -10,8 +10,8 @@ import { runPasteRestore } from "../admin/serverCopy.js";
 
 // ── Webhook message spam tracking (per webhookId) ──────────────────────────────
 const webhookMsgTimestamps = new Map<string, number[]>();
-const WEBHOOK_MSG_LIMIT   = 3;
-const WEBHOOK_MSG_WINDOW  = 8_000;
+const WEBHOOK_MSG_LIMIT    = 3;
+const WEBHOOK_MSG_WINDOW   = 8_000;
 
 const webhookContentSeen  = new Map<string, Map<string, number>>();
 const WEBHOOK_DUPE_WINDOW = 60_000;
@@ -48,12 +48,12 @@ function buildDetails(entry: GuildAuditLogsEntry): string {
 
 // ── Central detection & punishment pipeline ────────────────────────────────────
 async function handleAction(
-  client: Client,
-  guild: Guild,
-  executorId: string,
+  client:       Client,
+  guild:        Guild,
+  executorId:   string,
   isBotExecutor: boolean,
-  action: ActionType,
-  details: string,
+  action:       ActionType,
+  details:      string,
 ): Promise<boolean> {
   const config = await getConfig(guild.id);
   if (!config.enabled) return false;
@@ -86,7 +86,6 @@ async function handleAction(
   // Bots operate at machine speed — threshold is meaningless; quarantine immediately.
   // Humans: use sliding-window counter with default thresholds.
   const triggered = isBotExecutor || recordAction(guild.id, executorId, action, config);
-
   if (!triggered) return false;
 
   const didQuarantine = await quarantine(client, guild, executorId, isBotExecutor, action, details);
@@ -112,70 +111,104 @@ async function handleAction(
   await applyEmbedOverride("antinuke.alert", alertEmbed, {
     user:      `<@${executorId}>`,
     action,
-    count:     String(config.thresholds?.[action] ?? 0),
-    threshold: String(config.thresholds?.[action] ?? 0),
+    count:     String(config.thresholds?.[action]?.count ?? 0),
+    threshold: String(config.thresholds?.[action]?.count ?? 0),
   });
   await postAntiNukeLog(client, guild, alertEmbed);
 
   // ── Auto-restore from ?copy snapshot ─────────────────────────────────────
-  void (async () => {
-    try {
-      const { embed: restoreEmbed } = await runPasteRestore(guild, client);
-      restoreEmbed.setTimestamp();
-      await postAntiNukeLog(client, guild, restoreEmbed);
-    } catch (err) {
-      console.error("[ANTINUKE] Auto-restore failed:", err);
-      const errEmbed = new EmbedBuilder()
-        .setColor(0xFF4444)
-        .setTitle("❌ Auto-Restore Error")
-        .setDescription(`The auto-restore from \`?copy\` snapshot failed:\n\`\`\`\n${(err as Error).message}\n\`\`\``)
-        .setTimestamp();
-      await postAntiNukeLog(client, guild, errEmbed).catch(() => {});
-    }
-  })();
+  // Only attempt a structural restore when the offending action actually
+  // destroyed channels or roles. Running it on a ban-spree would recreate
+  // server structure from a potentially stale ?copy snapshot for no reason.
+  if (action === "channelDelete" || action === "roleDelete") {
+    void (async () => {
+      try {
+        const { embed: restoreEmbed } = await runPasteRestore(guild, client);
+        restoreEmbed.setTimestamp();
+        await postAntiNukeLog(client, guild, restoreEmbed);
+      } catch (err) {
+        console.error("[ANTINUKE] Auto-restore failed:", err);
+        const errEmbed = new EmbedBuilder()
+          .setColor(0xFF4444)
+          .setTitle("❌ Auto-Restore Error")
+          .setDescription(
+            `The auto-restore from \`?copy\` snapshot failed:\n\`\`\`\n${(err as Error).message}\n\`\`\``,
+          )
+          .setTimestamp();
+        await postAntiNukeLog(client, guild, errEmbed).catch(() => {});
+      }
+    })();
+  }
 
   return true;
 }
 
-// ── Shared webhook spam action ─────────────────────────────────────────────────
+// ── Webhook spam action ────────────────────────────────────────────────────────
+// Deletes only the specific offending webhook. Broad "delete all recent
+// webhooks" logic was removed — it ran simultaneously with quarantine()'s
+// own cleanup and caused duplicate deletions and log spam.
 async function triggerWebhookSpamAction(
-  client: Client,
-  guild: Guild,
-  channel: Message["channel"],
+  client:    Client,
+  guild:     Guild,
+  channel:   Message["channel"],
   webhookId: string,
-  reason: string,
+  reason:    string,
 ): Promise<void> {
   const embed = new EmbedBuilder()
     .setColor(0xFF6B35)
     .setTitle("⚠️ Webhook Spam Detected")
     .addFields(
-      { name: "Webhook ID", value: `\`${webhookId}\``, inline: true },
-      { name: "Channel",    value: channel.isDMBased() ? "DM" : `<#${channel.id}>`, inline: true },
-      { name: "Reason",     value: reason, inline: false },
+      { name: "Webhook ID", value: `\`${webhookId}\``,                                     inline: true },
+      { name: "Channel",    value: channel.isDMBased() ? "DM" : `<#${channel.id}>`,        inline: true },
+      { name: "Reason",     value: reason,                                                  inline: false },
     )
     .setTimestamp();
   await postAntiNukeLog(client, guild, embed);
 
   try {
-    const all    = await guild.fetchWebhooks();
-    const cutoff = Date.now() - 120_000;
-    let deleted  = 0;
-    for (const wh of all.values()) {
-      if (wh.id === webhookId || wh.createdTimestamp > cutoff) {
-        try { await wh.delete("Anti-Nuke: webhook spam cleanup"); deleted++; } catch { /* skip */ }
-      }
-    }
-    if (deleted > 0) {
+    const all = await guild.fetchWebhooks();
+    const wh  = all.get(webhookId);
+    if (wh) {
+      await wh.delete("Anti-Nuke: webhook spam").catch(() => {});
       const cleanupEmbed = new EmbedBuilder()
         .setColor(0xFF0000)
-        .setTitle("🗑️ Rogue Webhooks Deleted")
-        .setDescription(`Deleted **${deleted}** webhook(s) created in the past 2 minutes.`)
+        .setTitle("🗑️ Rogue Webhook Deleted")
+        .setDescription(`Deleted webhook \`${webhookId}\`.`)
         .setTimestamp();
       await postAntiNukeLog(client, guild, cleanupEmbed);
     }
   } catch (e) {
     console.error("[ANTINUKE] Webhook spam cleanup failed:", e);
   }
+}
+
+// ── Executor resolution with retry + backoff ───────────────────────────────────
+// Discord's audit log can lag by a few hundred milliseconds. We retry up to
+// three times with increasing delays before giving up, so transient API
+// latency doesn't silently drop the snapshot.
+const SNAP_AUDIT_LIMIT = 10;
+const SNAP_RETRY_DELAYS_MS = [800, 1_400, 2_500] as const;
+
+async function resolveExecutorForSnap(
+  guild:      Guild,
+  auditEvent: AuditLogEvent,
+  targetId?:  string,
+): Promise<string | null> {
+  for (const delay of SNAP_RETRY_DELAYS_MS) {
+    await new Promise<void>(res => setTimeout(res, delay));
+    try {
+      const logs  = await guild.fetchAuditLogs({ type: auditEvent, limit: SNAP_AUDIT_LIMIT });
+      const entry = targetId
+        ? logs.entries.find(e => e.target && "id" in e.target && (e.target as { id: string }).id === targetId)
+        : logs.entries.find(e => Date.now() - e.createdTimestamp < 8_000);
+      if (entry?.executor?.id) return entry.executor.id;
+      // Audit log not populated yet — retry with longer delay
+    } catch {
+      // Transient API error — retry
+    }
+  }
+  console.warn(`[ANTINUKE] resolveExecutorForSnap: could not resolve executor for ${auditEvent} on target ${targetId ?? "?"} after ${SNAP_RETRY_DELAYS_MS.length} attempts`);
+  return null;
 }
 
 // ── Event registration ─────────────────────────────────────────────────────────
@@ -196,23 +229,10 @@ export function registerAntiNukeEvents(client: Client): void {
       .catch(err => console.error(`[ANTINUKE] handleAction(${action}):`, err));
   });
 
-  const SNAP_DELAY_MS    = 800;
-  const SNAP_AUDIT_LIMIT = 10;
-
-  async function resolveExecutorForSnap(
-    guild: Guild,
-    auditEvent: AuditLogEvent,
-    targetId?: string,
-  ): Promise<string | null> {
-    await new Promise<void>(res => setTimeout(res, SNAP_DELAY_MS));
-    try {
-      const logs  = await guild.fetchAuditLogs({ type: auditEvent, limit: SNAP_AUDIT_LIMIT });
-      const entry = targetId
-        ? logs.entries.find(e => e.target && "id" in e.target && (e.target as { id: string }).id === targetId)
-        : logs.entries.find(e => Date.now() - e.createdTimestamp < 5_000);
-      return entry?.executor?.id ?? null;
-    } catch { return null; }
-  }
+  // ── Snapshot capture ─────────────────────────────────────────────────────
+  // These listeners capture deleted resources BEFORE they're gone from the API,
+  // so ?antinuke restore has the data it needs. They run independently from the
+  // detection path above.
 
   client.on(Events.ChannelDelete, (channel) => {
     if (channel.isDMBased()) return;
@@ -232,7 +252,7 @@ export function registerAntiNukeEvents(client: Client): void {
       await postAntiNukeLog(client, guild, infoEmbed);
 
       const executorId = await resolveExecutorForSnap(guild, AuditLogEvent.ChannelDelete, snap.id);
-      if (executorId) recordChannelSnap(guild.id, executorId, snap);
+      if (executorId) await recordChannelSnap(guild.id, executorId, snap);
     })().catch(err => console.error("[ANTINUKE] channelDelete snap:", err));
   });
 
@@ -252,7 +272,7 @@ export function registerAntiNukeEvents(client: Client): void {
       await postAntiNukeLog(client, guild, infoEmbed);
 
       const executorId = await resolveExecutorForSnap(guild, AuditLogEvent.RoleDelete, snap.id);
-      if (executorId) recordRoleSnap(guild.id, executorId, snap);
+      if (executorId) await recordRoleSnap(guild.id, executorId, snap);
     })().catch(err => console.error("[ANTINUKE] roleDelete snap:", err));
   });
 
@@ -267,16 +287,18 @@ export function registerAntiNukeEvents(client: Client): void {
         .setTitle("🔨 Member Banned")
         .setThumbnail(ban.user.displayAvatarURL({ size: 64 }))
         .addFields(
-          { name: "User",   value: `<@${ban.user.id}> (${tag})`,       inline: true },
+          { name: "User",   value: `<@${ban.user.id}> (${tag})`,        inline: true },
           { name: "Reason", value: ban.reason ?? "*No reason provided*", inline: false },
         )
         .setTimestamp();
       await postAntiNukeLog(client, guild, infoEmbed);
 
       const executorId = await resolveExecutorForSnap(guild, AuditLogEvent.MemberBanAdd, snap.user.id);
-      if (executorId) recordBanSnap(guild.id, executorId, snap);
+      if (executorId) await recordBanSnap(guild.id, executorId, snap);
     })().catch(err => console.error("[ANTINUKE] guildBanAdd snap:", err));
   });
+
+  // ── Webhook message spam detection ───────────────────────────────────────
 
   client.on(Events.MessageCreate, async (message) => {
     if (!message.webhookId || !message.guild) return;
@@ -287,6 +309,7 @@ export function registerAntiNukeEvents(client: Client): void {
 
     const now = Date.now();
 
+    // Volume check
     const times = webhookMsgTimestamps.get(webhookId) ?? [];
     const fresh = times.filter(t => now - t < WEBHOOK_MSG_WINDOW);
     fresh.push(now);
@@ -294,13 +317,15 @@ export function registerAntiNukeEvents(client: Client): void {
 
     if (fresh.length >= WEBHOOK_MSG_LIMIT) {
       webhookMsgTimestamps.delete(webhookId);
+      webhookContentSeen.delete(webhookId);
       await triggerWebhookSpamAction(
         client, guild, message.channel, webhookId,
-        `Volume: **${fresh.length}** messages in ${WEBHOOK_MSG_WINDOW / 1000}s`,
+        `Volume: **${fresh.length}** messages in ${WEBHOOK_MSG_WINDOW / 1_000}s`,
       );
       return;
     }
 
+    // Duplicate content check
     const normalised = message.content.replace(/\s+/g, " ").trim().toLowerCase();
     if (!normalised) return;
 
@@ -310,17 +335,35 @@ export function registerAntiNukeEvents(client: Client): void {
 
     if (firstSeen !== undefined && now - firstSeen < WEBHOOK_DUPE_WINDOW) {
       webhookContentSeen.delete(webhookId);
+      webhookMsgTimestamps.delete(webhookId);
       await triggerWebhookSpamAction(
         client, guild, message.channel, webhookId,
-        `Duplicate: identical message sent twice within ${WEBHOOK_DUPE_WINDOW / 1000}s`,
+        `Duplicate: identical message within ${WEBHOOK_DUPE_WINDOW / 1_000}s`,
       );
     } else {
       seen.set(normalised, now);
+      // Prune stale entries inline
       for (const [k, ts] of seen) {
         if (now - ts > WEBHOOK_DUPE_WINDOW) seen.delete(k);
       }
     }
   });
+
+  // ── Periodic cleanup of webhook tracking maps ─────────────────────────────
+  // Without this, entries for inactive webhooks accumulate indefinitely.
+  // Every 10 minutes we evict anything that hasn't fired within its window.
+  setInterval(() => {
+    const now = Date.now();
+    for (const [id, times] of webhookMsgTimestamps) {
+      if (times.every(t => now - t > WEBHOOK_MSG_WINDOW)) webhookMsgTimestamps.delete(id);
+    }
+    for (const [id, seen] of webhookContentSeen) {
+      for (const [content, ts] of seen) {
+        if (now - ts > WEBHOOK_DUPE_WINDOW) seen.delete(content);
+      }
+      if (seen.size === 0) webhookContentSeen.delete(id);
+    }
+  }, 10 * 60 * 1_000).unref(); // .unref() so this timer doesn't prevent clean shutdown
 
   console.log("[ANTINUKE] Events registered (GuildAuditLogEntryCreate + snapshot + webhook-spam).");
 }

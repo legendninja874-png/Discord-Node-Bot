@@ -288,11 +288,30 @@ export const antiNukeWhitelistTable = pgTable("antinuke_whitelist", {
 });
 
 export const antiNukeConfigTable = pgTable("antinuke_config", {
-  guildId: text("guild_id").primaryKey(),
-  enabled: boolean("enabled").notNull().default(false),
+  guildId:      text("guild_id").primaryKey(),
+  enabled:      boolean("enabled").notNull().default(false),
   logChannelId: text("log_channel_id"),
-  logPingIds: text("log_ping_ids").array().notNull().default([]),
-  thresholds: jsonb("thresholds").notNull().default({}),
+  logPingIds:   text("log_ping_ids").array().notNull().default([]),
+  thresholds:   jsonb("thresholds").notNull().default({}),
+  // punishAction was previously smuggled into the thresholds JSONB under "_punishAction".
+  // It now lives in its own column. Old rows are migrated on first read.
+  punishAction: text("punish_action").notNull().default("strip"),
+});
+
+// Antinuke offender snapshots — persisted so restores survive bot restarts.
+// One row per (guildId, executorId); data is an OffenderSnap JSON blob.
+export const antiNukeSnapshotsTable = pgTable("antinuke_snapshots", {
+  guildId:    text("guild_id").notNull(),
+  executorId: text("executor_id").notNull(),
+  data:       jsonb("data").notNull().default({}),
+  updatedAt:  timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [primaryKey({ columns: [t.guildId, t.executorId] })]);
+
+// Ctby grants — who can manage the whitelist (beyond owner).
+// Was previously in-memory only; now persisted.
+export const antiNukeCtbyTable = pgTable("antinuke_ctby", {
+  guildId: text("guild_id").primaryKey(),
+  userIds: text("user_ids").array().notNull().default([]),
 });
 
 // ── Lowo ───────────────────────────────────────────────────────────────────────

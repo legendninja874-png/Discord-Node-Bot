@@ -23,9 +23,10 @@ export const REVERIFY_PREFIX = "reverify:";
 // ── bot_kv config ──────────────────────────────────────────────────────────────
 
 interface AuthVerifyConfig {
-  verifiedRoleId:   string;
-  unverifiedRoleId: string;
-  verifyChannelId:  string;
+  verifiedRoleId:          string;
+  unverifiedRoleId:        string;
+  verifyChannelId:         string;
+  unverifiedChatChannelId: string;
 }
 
 async function saveConfig(guildId: string, config: AuthVerifyConfig): Promise<void> {
@@ -164,9 +165,62 @@ export async function handleSetupAuthVerification(message: import("discord.js").
     }) as TextChannel;
   }
 
-  // ── 3. Lock every other channel for unverified members ────────────────────
+  // ── 3. #unverified-chat channel ───────────────────────────────────────────
+  // Reuse existing channel if already set up.
+  let unverifiedChatChannel = existing?.unverifiedChatChannelId
+    ? (guild.channels.cache.get(existing.unverifiedChatChannelId) as TextChannel | undefined)
+    : undefined;
+
+  if (!unverifiedChatChannel) {
+    unverifiedChatChannel = await guild.channels.create({
+      name:  "unverified-chat",
+      type:  ChannelType.GuildText,
+      topic: "Chat here while you wait to verify.",
+      permissionOverwrites: [
+        // @everyone: cannot see this channel
+        {
+          id:   guild.roles.everyone.id,
+          type: OverwriteType.Role,
+          deny: [PermissionFlagsBits.ViewChannel],
+        },
+        // Unverified: can see and chat freely
+        {
+          id:    unverifiedRole.id,
+          type:  OverwriteType.Role,
+          allow: [
+            PermissionFlagsBits.ViewChannel,
+            PermissionFlagsBits.SendMessages,
+            PermissionFlagsBits.ReadMessageHistory,
+          ],
+        },
+        // Verified: cannot see it
+        {
+          id:   verifiedRole.id,
+          type: OverwriteType.Role,
+          deny: [PermissionFlagsBits.ViewChannel],
+        },
+        // Bot: full access
+        ...(guild.members.me
+          ? [{
+              id:    guild.members.me.id,
+              type:  OverwriteType.Member as OverwriteType,
+              allow: [
+                PermissionFlagsBits.ViewChannel,
+                PermissionFlagsBits.SendMessages,
+                PermissionFlagsBits.EmbedLinks,
+                PermissionFlagsBits.ReadMessageHistory,
+                PermissionFlagsBits.ManageMessages,
+              ] as bigint[],
+            }]
+          : []),
+      ],
+      reason: "Auth verification setup",
+    }) as TextChannel;
+  }
+
+  // ── 4. Lock every other channel for unverified members ────────────────────
   const otherChannels = [...guild.channels.cache.values()].filter(
-    c => c.id !== verifyChannel!.id && "permissionOverwrites" in c,
+    c => c.id !== verifyChannel!.id && c.id !== unverifiedChatChannel!.id && "permissionOverwrites" in c,
   );
 
   await Promise.allSettled(
@@ -179,7 +233,7 @@ export async function handleSetupAuthVerification(message: import("discord.js").
     ),
   );
 
-  // ── 4. Post verification embed in #verify ─────────────────────────────────
+  // ── 5. Post verification embed in #verify ─────────────────────────────────
   const oauthUrl = process.env.DISCORD_CLIENT_ID && process.env.OAUTH_REDIRECT_URI
     ? buildOAuthUrl(guild.id)
     : "https://discord.com";
@@ -206,14 +260,15 @@ export async function handleSetupAuthVerification(message: import("discord.js").
   await verifyChannel.bulkDelete(10).catch(() => {});
   await verifyChannel.send({ embeds: [verifyEmbed], components: [row] });
 
-  // ── 5. Persist config ──────────────────────────────────────────────────────
+  // ── 6. Persist config ──────────────────────────────────────────────────────
   await saveConfig(guild.id, {
-    verifiedRoleId:   verifiedRole.id,
-    unverifiedRoleId: unverifiedRole.id,
-    verifyChannelId:  verifyChannel.id,
+    verifiedRoleId:          verifiedRole.id,
+    unverifiedRoleId:        unverifiedRole.id,
+    verifyChannelId:         verifyChannel.id,
+    unverifiedChatChannelId: unverifiedChatChannel.id,
   });
 
-  // ── 6. Success reply ───────────────────────────────────────────────────────
+  // ── 7. Success reply ───────────────────────────────────────────────────────
   await statusMsg.edit({
     embeds: [
       new EmbedBuilder()
@@ -223,8 +278,9 @@ export async function handleSetupAuthVerification(message: import("discord.js").
           `Setup complete! Here's what was configured:\n\n` +
           `🟢 **Verified role:** ${verifiedRole}\n` +
           `⚪ **Unverified role:** ${unverifiedRole}\n` +
-          `🔒 **Verify channel:** ${verifyChannel}\n\n` +
-          `New members will automatically get **${unverifiedName}** on join.\n` +
+          `🔒 **Verify channel:** ${verifyChannel}\n` +
+          `💬 **Unverified chat:** ${unverifiedChatChannel}\n\n` +
+          `New members get **${unverifiedName}** on join, can chat in ${unverifiedChatChannel} while waiting, and must verify to see the rest of the server.\n` +
           `Previously verified members who rejoin get a one-click re-verify DM.`,
         )
         .addFields({

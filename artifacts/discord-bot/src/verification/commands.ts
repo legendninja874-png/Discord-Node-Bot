@@ -17,6 +17,7 @@ import {
   refreshAccessToken,
   addUserToGuild,
 } from "./oauth.js";
+import { buildVerifyPanel } from "./panel.js";
 
 const COLOR_PRIMARY = 0x2f3136;
 const COLOR_ACCENT = 0x00ffff;
@@ -38,23 +39,7 @@ export async function handleSetupVerification(message: Message): Promise<void> {
     return;
   }
 
-  const embed = new EmbedBuilder()
-    .setColor(COLOR_ACCENT)
-    .setTitle("LAST STAND")
-    .setDescription(
-      "## Verification Required\n\n" +
-      "Click the button below to verify your account and gain access to the server.\n\n" +
-      "**It only takes a few seconds.**",
-    )
-    .setFooter({ text: "Last Stand · Verification" });
-
-  const button = new ButtonBuilder()
-    .setLabel("Verify")
-    .setStyle(ButtonStyle.Link)
-    .setURL(oauthUrl)
-    .setEmoji("✅");
-
-  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+  const { embed, row } = buildVerifyPanel(message.guild.name, oauthUrl);
 
   try {
     await (message.channel as TextChannel).send({ embeds: [embed], components: [row] });

@@ -14,6 +14,7 @@ import {
 import { getPool } from "../persistence.js";
 import { updateAuthTokens } from "./db.js";
 import { buildOAuthUrl, refreshAccessToken } from "./oauth.js";
+import { buildVerifyPanel } from "./panel.js";
 
 const COLOR_ACCENT  = 0x00ffff;
 const COLOR_SUCCESS = 0x00ff88;
@@ -238,23 +239,7 @@ export async function handleSetupAuthVerification(message: import("discord.js").
     ? buildOAuthUrl(guild.id)
     : "https://discord.com";
 
-  const verifyEmbed = new EmbedBuilder()
-    .setColor(COLOR_ACCENT)
-    .setTitle("🔐 Verification Required")
-    .setDescription(
-      `Welcome to **${guild.name}**!\n\n` +
-      "To gain full access to the server, verify your account by clicking the button below.\n" +
-      "**It only takes a few seconds.**",
-    )
-    .setFooter({ text: `You will receive the ${verifiedName} role upon verification.` });
-
-  const verifyButton = new ButtonBuilder()
-    .setLabel("Verify Now")
-    .setStyle(ButtonStyle.Link)
-    .setURL(oauthUrl)
-    .setEmoji("✅");
-
-  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(verifyButton);
+  const { embed: verifyEmbed, row } = buildVerifyPanel(guild.name, oauthUrl);
 
   // Clear old messages and repost so it's always at the bottom
   await verifyChannel.bulkDelete(10).catch(() => {});

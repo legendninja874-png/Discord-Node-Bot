@@ -8,24 +8,32 @@ export interface AuthBackupRow {
   guild_id: string;
 }
 
-export async function upsertAuthBackup(
+/**
+ * Snapshot a member's role IDs so they can be fully restored after verification.
+ * Uses a dedicated table so it works even before a member has an OAuth token.
+ */
+export async function saveRoleSnapshot(
   userId: string,
-  accessToken: string,
-  refreshToken: string,
-  expiresIn: number,
   guildId: string,
+  roleIds: string[],
 ): Promise<void> {
   if (!process.env.DATABASE_URL) return;
-  const expiry = new Date(Date.now() + expiresIn * 1000);
   await getPool().query(
-    `INSERT INTO auth_backups (user_id, access_token, refresh_token, token_expiry, guild_id)
-     VALUES ($1, $2, $3, $4, $5)
-     ON CONFLICT (user_id, guild_id) DO UPDATE
-     SET access_token  = EXCLUDED.access_token,
-         refresh_token = EXCLUDED.refresh_token,
-         token_expiry  = EXCLUDED.token_expiry`,
-    [userId, accessToken, refreshToken, expiry.toISOString(), guildId],
+    `INSERT INTO member_role_snapshots (user_id, guild_id, roles)
+     VALUES ($1, $2, $3::jsonb)
+     ON CONFLICT (user_id, guild_id) DO UPDATE SET roles = $3::jsonb`,
+    [userId, guildId, JSON.stringify(roleIds)],
   );
+}
+
+/** Returns the stored role IDs for a member, or [] if none recorded. */
+export async function getStoredRoles(userId: string, guildId: string): Promise<string[]> {
+  if (!process.env.DATABASE_URL) return [];
+  const res = await getPool().query<{ roles: string[] }>(
+    `SELECT roles FROM member_role_snapshots WHERE user_id = $1 AND guild_id = $2`,
+    [userId, guildId],
+  );
+  return res.rows[0]?.roles ?? [];
 }
 
 export async function updateAuthTokens(

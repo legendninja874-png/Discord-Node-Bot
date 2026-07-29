@@ -357,6 +357,16 @@ async function ensureSchema(): Promise<void> {
 
   // Antinuke: add immune_ids column if it was created before this column existed
   await db.query(`ALTER TABLE antinuke_whitelist ADD COLUMN IF NOT EXISTS immune_ids TEXT[] NOT NULL DEFAULT '{}';`).catch(() => {});
+
+  // Role snapshots — stores every member's roles before setup so they can be restored on verify
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS member_role_snapshots (
+      user_id  TEXT NOT NULL,
+      guild_id TEXT NOT NULL,
+      roles    JSONB NOT NULL DEFAULT '[]',
+      PRIMARY KEY (user_id, guild_id)
+    );
+  `).catch(() => {});
 }
 
 export async function initPersistence(): Promise<void> {

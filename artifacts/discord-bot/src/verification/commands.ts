@@ -11,13 +11,16 @@ import {
   TextChannel,
   VoiceChannel,
 } from "discord.js";
-import { getAllAuthBackups, getAuthBackupCount, updateAuthTokens } from "./db.js";
+import { getAllAuthBackups, getAuthBackupCount, getStoredRoles, updateAuthTokens } from "./db.js";
 import {
   buildOAuthUrl,
   refreshAccessToken,
   addUserToGuild,
 } from "./oauth.js";
 import { buildVerifyPanel } from "./panel.js";
+import { loadConfig } from "./setupAuthVerification.js";
+
+const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
 
 const COLOR_PRIMARY = 0x2f3136;
 const COLOR_ACCENT = 0x00ffff;
@@ -68,11 +71,8 @@ export async function handleAddAuthPlayers(message: Message): Promise<void> {
     return;
   }
 
-  // Find "clan members" role case-insensitively
-  const clanRole = message.guild.roles.cache.find(
-    (r) => r.name.toLowerCase() === "clan members" || r.name.toLowerCase() === "member",
-  );
-  const clanRoleId = clanRole?.id ? [clanRole.id] : [];
+  // Load stored config so we use the correct role IDs (not fragile name lookup)
+  const config = await loadConfig(guildId).catch(() => null);
 
   const statusMsg = await message.reply({
     embeds: [
@@ -88,13 +88,15 @@ export async function handleAddAuthPlayers(message: Message): Promise<void> {
   let failed = 0;
   let refreshed = 0;
 
+  const skipIds = new Set<string>([config?.unverifiedRoleId].filter((id): id is string => !!id));
+
   for (const row of rows) {
     let token = row.access_token;
 
     // Refresh if expired
     if (new Date(row.token_expiry) < new Date()) {
       const newTokens = await refreshAccessToken(row.refresh_token);
-      if (!newTokens) { failed++; continue; }
+      if (!newTokens) { failed++; await sleep(300); continue; }
       token = newTokens.access_token;
       refreshed++;
       await updateAuthTokens(
@@ -106,9 +108,19 @@ export async function handleAddAuthPlayers(message: Message): Promise<void> {
       ).catch(() => {});
     }
 
-    const ok = await addUserToGuild(row.user_id, token, guildId, clanRoleId);
+    // Restore all previously snapshotted roles + verified role from config
+    const stored = await getStoredRoles(row.user_id, guildId).catch(() => [] as string[]);
+    const roleIds = [
+      ...stored.filter(id => !skipIds.has(id)),
+      ...(config?.verifiedRoleId ? [config.verifiedRoleId] : []),
+    ];
+
+    const ok = await addUserToGuild(row.user_id, token, guildId, roleIds);
     if (ok) recovered++;
     else failed++;
+
+    // Avoid Discord rate limits when processing large member lists
+    await sleep(500);
   }
 
   const embed = new EmbedBuilder()
@@ -120,7 +132,7 @@ export async function handleAddAuthPlayers(message: Message): Promise<void> {
         (failed > 0 ? ` **${failed}** couldn't be recovered (tokens dead or user left willingly).` : ""),
     )
     .addFields(
-      { name: "Role Assigned", value: clanRole ? clanRole.name : "None found — role must be recreated first", inline: true },
+      { name: "Role Assigned", value: config?.verifiedRoleId ? "Verified + previous roles" : "No config found — run `?setupauthverification` first", inline: true },
     )
     .setFooter({ text: "Last Stand Management • OAuth2 Backup System" });
 

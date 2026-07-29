@@ -12,7 +12,7 @@ import {
   TextChannel,
 } from "discord.js";
 import { getPool } from "../persistence.js";
-import { updateAuthTokens } from "./db.js";
+import { updateAuthTokens, saveRoleSnapshot, getStoredRoles } from "./db.js";
 import { buildOAuthUrl, refreshAccessToken } from "./oauth.js";
 import { buildVerifyPanel } from "./panel.js";
 
@@ -39,7 +39,7 @@ async function saveConfig(guildId: string, config: AuthVerifyConfig): Promise<vo
   );
 }
 
-async function loadConfig(guildId: string): Promise<AuthVerifyConfig | null> {
+export async function loadConfig(guildId: string): Promise<AuthVerifyConfig | null> {
   const db = getPool();
   const res = await db.query<{ value: AuthVerifyConfig }>(
     `SELECT value FROM bot_kv WHERE key = $1`,
@@ -234,6 +234,22 @@ export async function handleSetupAuthVerification(message: import("discord.js").
     ),
   );
 
+  // ── 4b. Snapshot every existing member's roles ─────────────────────────────
+  // We store each member's current roles so we can fully restore them when
+  // they verify (rather than only giving back the generic Verified role).
+  const skipIds = new Set([guild.roles.everyone.id, verifiedRole.id, unverifiedRole.id]);
+  const allMembers = await guild.members.fetch().catch(() => guild.members.cache);
+  await Promise.allSettled(
+    [...allMembers.values()]
+      .filter(m => !m.user.bot)
+      .map(m => {
+        const roleIds = m.roles.cache
+          .filter(r => !skipIds.has(r.id))
+          .map(r => r.id);
+        return saveRoleSnapshot(m.user.id, guild.id, roleIds).catch(() => {});
+      }),
+  );
+
   // ── 5. Post verification embed in #verify ─────────────────────────────────
   const oauthUrl = process.env.DISCORD_CLIENT_ID && process.env.OAUTH_REDIRECT_URI
     ? buildOAuthUrl(guild.id)
@@ -324,6 +340,9 @@ export async function handleMemberJoin(member: GuildMember): Promise<void> {
 // ── Re-verify button ───────────────────────────────────────────────────────────
 
 export async function handleReverifyButton(interaction: ButtonInteraction): Promise<void> {
+  // Defer immediately — DB + Discord calls can easily exceed the 3-second interaction window.
+  await interaction.deferReply({ ephemeral: true });
+
   const guildId = interaction.customId.slice(REVERIFY_PREFIX.length);
   const userId  = interaction.user.id;
 
@@ -371,8 +390,15 @@ export async function handleReverifyButton(interaction: ButtonInteraction): Prom
   const verifiedRole   = guild.roles.cache.get(config.verifiedRoleId);
   const unverifiedRole = guild.roles.cache.get(config.unverifiedRoleId);
 
-  if (verifiedRole)   await member.roles.add(verifiedRole,    "One-click re-verify").catch(() => {});
+  if (verifiedRole)   await member.roles.add(verifiedRole,      "One-click re-verify").catch(() => {});
   if (unverifiedRole) await member.roles.remove(unverifiedRole, "One-click re-verify").catch(() => {});
+
+  // Restore all previously snapshotted roles
+  const skipIds = new Set([config.verifiedRoleId, config.unverifiedRoleId]);
+  const storedRoles = await getStoredRoles(userId, guildId).catch(() => [] as string[]);
+  for (const roleId of storedRoles.filter(id => !skipIds.has(id))) {
+    await member.roles.add(roleId, "Re-verify: restoring previous roles").catch(() => {});
+  }
 
   await interaction.editReply({
     content: `✅ You're back in **${guild.name}**! You now have full access to the server.`,

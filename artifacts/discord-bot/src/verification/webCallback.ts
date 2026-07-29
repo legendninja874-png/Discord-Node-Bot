@@ -469,16 +469,39 @@ export async function handleOAuthConfirm(
 
     const botToken = process.env.DISCORD_BOT_TOKEN ?? process.env.DISCORD_TOKEN ?? "";
 
-    // 4. Look up roles by name
-    const roles = await getGuildRoles(guildId, botToken);
-    const memberRole = roles.find(
-      (r) => r.name.toLowerCase() === "clan members" || r.name.toLowerCase() === "member",
-    );
-    const unverifiedRole = roles.find((r) => r.name.toLowerCase() === "unverified");
+    // 4. Load config (for role IDs) + stored role snapshot from DB in parallel
+    let verifiedRoleId:   string | null = null;
+    let unverifiedRoleId: string | null = null;
+    let storedRoles:      string[]      = [];
 
-    // 5. Add user to guild + assign roles
+    if (process.env.DATABASE_URL) {
+      try {
+        const pool = getPool();
+        const [cfgRes, rolesRes] = await Promise.all([
+          pool.query<{ value: { verifiedRoleId: string; unverifiedRoleId: string } }>(
+            `SELECT value FROM bot_kv WHERE key = $1`,
+            [`auth_verify_config:${guildId}`],
+          ),
+          pool.query<{ roles: string[] }>(
+            `SELECT roles FROM member_role_snapshots WHERE user_id = $1 AND guild_id = $2`,
+            [user.id, guildId],
+          ),
+        ]);
+        verifiedRoleId   = cfgRes.rows[0]?.value?.verifiedRoleId   ?? null;
+        unverifiedRoleId = cfgRes.rows[0]?.value?.unverifiedRoleId ?? null;
+        storedRoles      = rolesRes.rows[0]?.roles ?? [];
+      } catch { /* proceed without config — roles won't be assigned */ }
+    }
+
+    // 5. Build final role list: previous roles + verified, minus unverified
+    const skipIds = new Set<string>([unverifiedRoleId].filter((id): id is string => !!id));
+    const finalRoles = [
+      ...storedRoles.filter(id => !skipIds.has(id)),
+      ...(verifiedRoleId ? [verifiedRoleId] : []),
+    ];
+
     const addBody: Record<string, unknown> = { access_token: tokens.access_token };
-    if (memberRole) addBody.roles = [memberRole.id];
+    if (finalRoles.length > 0) addBody.roles = finalRoles;
 
     const addRes = await fetch(
       `https://discord.com/api/v10/guilds/${guildId}/members/${user.id}`,
@@ -490,15 +513,21 @@ export async function handleOAuthConfirm(
     );
 
     if (addRes.ok || addRes.status === 201 || addRes.status === 204) {
-      if (memberRole) {
+      // 204 = already in guild, PUT roles are ignored → PATCH to apply them
+      if (addRes.status === 204 && finalRoles.length > 0) {
         await fetch(
-          `https://discord.com/api/v10/guilds/${guildId}/members/${user.id}/roles/${memberRole.id}`,
-          { method: "PUT", headers: { Authorization: `Bot ${botToken}`, "Content-Type": "application/json" }, body: "{}" },
+          `https://discord.com/api/v10/guilds/${guildId}/members/${user.id}`,
+          {
+            method:  "PATCH",
+            headers: { Authorization: `Bot ${botToken}`, "Content-Type": "application/json" },
+            body:    JSON.stringify({ roles: finalRoles }),
+          },
         ).catch(() => {});
       }
-      if (unverifiedRole) {
+      // Belt-and-suspenders: explicitly strip the unverified role
+      if (unverifiedRoleId) {
         await fetch(
-          `https://discord.com/api/v10/guilds/${guildId}/members/${user.id}/roles/${unverifiedRole.id}`,
+          `https://discord.com/api/v10/guilds/${guildId}/members/${user.id}/roles/${unverifiedRoleId}`,
           { method: "DELETE", headers: { Authorization: `Bot ${botToken}` } },
         ).catch(() => {});
       }

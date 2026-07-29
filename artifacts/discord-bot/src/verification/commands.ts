@@ -46,7 +46,7 @@ export async function handleSetupVerification(message: Message): Promise<void> {
       "Click the button below to verify your account and gain access to the server.\n\n" +
       "**It only takes a few seconds.**",
     )
-    .setFooter({ text: "Last Stand · Members Only" });
+    .setFooter({ text: "Last Stand · Verification" });
 
   const emojiId = process.env.VERIFICATION_EMOJI_ID;
   const button = new ButtonBuilder()

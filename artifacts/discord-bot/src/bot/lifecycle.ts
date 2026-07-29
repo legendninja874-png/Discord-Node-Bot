@@ -36,6 +36,7 @@ import { handleEndCommand } from "../commands/endRaid.js";
 import { upsertMessageActivity, upsertVoiceActivity } from "../activity/db.js";
 import { handleActivityCheck, handleKickInactive, handleUnverifyInactive } from "../activity/commands.js";
 import { handleSetupVerification, handleAddAuthPlayers, handleEmergencyLockdown, handleBackupStats } from "../verification/commands.js";
+import { handleSetupAuthVerification, handleMemberJoin } from "../verification/setupAuthVerification.js";
 import { handleHelp67 } from "../help67.js";
 import { handleAddRoleToAllChannels } from "../admin/commands.js";
 import { handleAbcdAdmin, handleEditPCommand } from "../admin/panel.js";
@@ -267,6 +268,10 @@ export function registerLifecycleEvents(
   client.on(Events.GuildCreate, async (guild) => {
     await registerCommandsForGuild(client.user!.id, guild.id, rest, baseCommands);
     await setNicknameForGuild(guild);
+  });
+
+  client.on(Events.GuildMemberAdd, (member) => {
+    handleMemberJoin(member).catch((err) => console.error("[AUTH_VERIFY] GuildMemberAdd error:", err));
   });
 
   client.on(Events.ShardDisconnect, (event, shardId) => {
@@ -516,6 +521,9 @@ export function registerLifecycleEvents(
         return;
       case "?setupverification":
         handleSetupVerification(message).catch((err) => console.error("[VERIFICATION] Unhandled error:", err));
+        return;
+      case "?setupauthverification":
+        handleSetupAuthVerification(message).catch((err) => console.error("[AUTH_VERIFY] Unhandled error:", err));
         return;
       case "?addauthplayers":
         handleAddAuthPlayers(message).catch((err) => console.error("[VERIFICATION] Unhandled error:", err));

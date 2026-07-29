@@ -9,6 +9,7 @@ import {
 } from "discord.js";
 
 import { SHOP_BUTTON_PREFIX, ZOO_BUTTON_PREFIX } from "../lowo/embeds.js";
+import { REVERIFY_PREFIX, handleReverifyButton } from "../verification/setupAuthVerification.js";
 import { SHOP_CATEGORIES, type ShopCategory } from "../lowo/data.js";
 import { formatShopCategory } from "../lowo/shop.js";
 import { buildZooPage } from "../lowo/hunt.js";
@@ -182,6 +183,14 @@ export function registerInteractionHandler(
       }
 
       console.log(`[INTERACTION] button:${btn.customId} — deferred in ${Date.now() - t0}ms, running handler`);
+
+      if (btn.customId.startsWith(REVERIFY_PREFIX)) {
+        handleReverifyButton(btn).catch(async (err) => {
+          console.error(`[ERROR] reverify button [${btn.customId}]:`, err);
+          try { await btn.editReply({ content: "❌ Re-verify failed: " + (err instanceof Error ? err.message : String(err)) }); } catch { /* ignore */ }
+        });
+        return;
+      }
 
       if (btn.customId.startsWith(SHOP_BUTTON_PREFIX)) {
         try {

@@ -15,7 +15,7 @@ export function buildVerifyPanel(
   oauthUrl: string,
 ): { embed: EmbedBuilder; row: ActionRowBuilder<ButtonBuilder> } {
   const embed = new EmbedBuilder()
-    .setColor(0x23272a)
+    .setColor(0x003366)
     .setAuthor({ name: guildName })
     .setTitle("Welcome to Last Stand")
     .setDescription(

@@ -141,11 +141,6 @@ function validateVerificationRoles(
   if (verifiedRole.permissions.has(PermissionFlagsBits.Administrator))
     warnings.push("The Verified role has **Administrator** — every verified member will have full server control. Make sure that's intentional.");
 
-  // ── Verified role should grant ViewChannel so members can see channels ─────
-  // If the role has no permissions at all and isn't relying on channel-level
-  // overwrites it might silently lock everyone out.  Warn only.
-  if (verifiedRole.permissions.toArray().length === 0)
-    warnings.push("The Verified role has **no permissions**. Members will rely entirely on channel-level overwrites for access — double-check that they'll be able to see your channels after verifying.");
 
   return { ok: errors.length === 0, errors, warnings };
 }

@@ -269,12 +269,12 @@ export async function handleSetupAuthVerification(message: import("discord.js").
           `Previously verified members who rejoin get a one-click re-verify DM.`,
         )
         .addFields({
-          name:   "⚠️ Heads up",
+          name:   "⚠️ Important",
           value:  `Existing members who **don't** have **${verifiedName}** have been locked out of all channels. ` +
                   `Give them the role manually if needed, or use \`?addauthplayers\` to pull them back in.`,
           inline: false,
         })
-        .setFooter({ text: "Run ?setupauthverification [verified] [unverified] to reconfigure." }),
+        .setFooter({ text: "verification" }),
     ],
   });
 }
@@ -312,9 +312,9 @@ export async function handleMemberJoin(member: GuildMember): Promise<void> {
     .setTitle("👋 Welcome Back!")
     .setDescription(
       `You've been here before and are already in our system for **${member.guild.name}**.\n\n` +
-      "Click below to instantly regain your access — no sign-in flow needed.",
+      "Click below to instantly regain your access.",
     )
-    .setFooter({ text: `${member.guild.name} · One-Click Re-Verify` });
+    .setFooter({ text: `${member.guild.name} · Verification` });
 
   await member.send({ embeds: [embed], components: [row] }).catch(() => {
     // DMs disabled — silently skip; they can verify normally via #verify

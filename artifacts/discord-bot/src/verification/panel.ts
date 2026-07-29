@@ -17,14 +17,14 @@ export function buildVerifyPanel(
   const embed = new EmbedBuilder()
     .setColor(0x23272a)
     .setAuthor({ name: guildName })
-    .setTitle("you're almost in.")
+    .setTitle("Welcome to Last Stand")
     .setDescription(
-      `Hey, glad you made it!\n\n` +
-      `We verify everyone before giving server access — keeps things clean and the bots out. ` +
-      `It's just a quick Discord check, nothing weird.\n\n` +
-      `Hit the button below and you'll be through in under a minute.`,
+      `Hey, glad to see you in!\n\n` +
+      `We verify everyone before giving server access. ` +
+      `It's just a quick Discord check.\n\n` +
+      `Click the button below and you'll be through in under a minute.`,
     )
-    .setFooter({ text: "only members who verify can see the rest of the server" });
+    .setFooter({ text: "Contact EoN if it doesn't works" });
 
   const button = new ButtonBuilder()
     .setLabel("Get Verified")

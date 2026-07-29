@@ -64,6 +64,20 @@ async function getUserBackup(userId: string, guildId: string) {
   return res.rows[0] ?? null;
 }
 
+// ── Role resolver ──────────────────────────────────────────────────────────────
+// Accepts a role mention (<@&id>), a bare snowflake ID, or a plain name.
+// Returns the matching role from cache, or null if not found.
+function resolveExistingRole(guild: import("discord.js").Guild, input: string): import("discord.js").Role | null {
+  if (!input) return null;
+  // Role mention: <@&123456789>
+  const mentionMatch = input.match(/^<@&(\d+)>$/);
+  if (mentionMatch) return guild.roles.cache.get(mentionMatch[1]!) ?? null;
+  // Bare snowflake ID (17-20 digits)
+  if (/^\d{17,20}$/.test(input)) return guild.roles.cache.get(input) ?? null;
+  // Name (case-insensitive)
+  return guild.roles.cache.find(r => r.name.toLowerCase() === input.toLowerCase()) ?? null;
+}
+
 // ── ?setupauthverification ─────────────────────────────────────────────────────
 
 export async function handleSetupAuthVerification(message: import("discord.js").Message): Promise<void> {
@@ -75,8 +89,8 @@ export async function handleSetupAuthVerification(message: import("discord.js").
 
   const guild = message.guild;
   const args  = message.content.trim().split(/\s+/).slice(1);
-  const verifiedName   = args[0]?.trim() || "Verified";
-  const unverifiedName = args[1]?.trim() || "Unverified";
+  const verifiedArg   = args[0]?.trim() || "Verified";
+  const unverifiedArg = args[1]?.trim() || "Unverified";
 
   const statusMsg = await message.reply({
     embeds: [
@@ -88,29 +102,29 @@ export async function handleSetupAuthVerification(message: import("discord.js").
   });
 
   // ── 1. Roles ───────────────────────────────────────────────────────────────
-  // Load existing config so we reuse role IDs even if names were changed.
+  // Priority: mention/ID/name from args → previously saved config ID → create new
   const existing = await loadConfig(guild.id).catch(() => null);
 
-  let verifiedRole =
-    (existing?.verifiedRoleId ? guild.roles.cache.get(existing.verifiedRoleId) : undefined) ??
-    guild.roles.cache.find(r => r.name === verifiedName);
+  let verifiedRole: import("discord.js").Role | undefined =
+    resolveExistingRole(guild, verifiedArg) ??
+    (existing?.verifiedRoleId ? guild.roles.cache.get(existing.verifiedRoleId) : undefined);
 
   if (!verifiedRole) {
     verifiedRole = await guild.roles.create({
-      name:        verifiedName,
+      name:        verifiedArg,
       color:       0x00ff88,
       mentionable: false,
       reason:      "Auth verification setup",
     });
   }
 
-  let unverifiedRole =
-    (existing?.unverifiedRoleId ? guild.roles.cache.get(existing.unverifiedRoleId) : undefined) ??
-    guild.roles.cache.find(r => r.name === unverifiedName);
+  let unverifiedRole: import("discord.js").Role | undefined =
+    resolveExistingRole(guild, unverifiedArg) ??
+    (existing?.unverifiedRoleId ? guild.roles.cache.get(existing.unverifiedRoleId) : undefined);
 
   if (!unverifiedRole) {
     unverifiedRole = await guild.roles.create({
-      name:        unverifiedName,
+      name:        unverifiedArg,
       color:       0x99aab5,
       mentionable: false,
       reason:      "Auth verification setup",
@@ -281,12 +295,12 @@ export async function handleSetupAuthVerification(message: import("discord.js").
           `⚪ **Unverified role:** ${unverifiedRole}\n` +
           `🔒 **Verify channel:** ${verifyChannel}\n` +
           `💬 **Unverified chat:** ${unverifiedChatChannel}\n\n` +
-          `New members get **${unverifiedName}** on join, can chat in ${unverifiedChatChannel} while waiting, and must verify to see the rest of the server.\n` +
+          `New members get **${unverifiedArg}** on join, can chat in ${unverifiedChatChannel} while waiting, and must verify to see the rest of the server.\n` +
           `Previously verified members who rejoin get a one-click re-verify DM.`,
         )
         .addFields({
           name:   "⚠️ Important",
-          value:  `Existing members who **don't** have **${verifiedName}** have been locked out of all channels. ` +
+          value:  `Existing members who **don't** have **${verifiedArg}** have been locked out of all channels. ` +
                   `Give them the role manually if needed, or use \`?addauthplayers\` to pull them back in.`,
           inline: false,
         })

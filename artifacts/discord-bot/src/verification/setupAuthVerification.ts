@@ -5,10 +5,12 @@ import {
   ButtonStyle,
   ChannelType,
   EmbedBuilder,
+  Guild,
   GuildMember,
   MessageFlags,
   OverwriteType,
   PermissionFlagsBits,
+  Role,
   TextChannel,
 } from "discord.js";
 import { getPool } from "../persistence.js";
@@ -62,6 +64,90 @@ async function getUserBackup(userId: string, guildId: string) {
     [userId, guildId],
   );
   return res.rows[0] ?? null;
+}
+
+// ── Role validation ────────────────────────────────────────────────────────────
+
+const DANGEROUS_UNVERIFIED_PERMS: [bigint, string][] = [
+  [PermissionFlagsBits.Administrator,     "Administrator"],
+  [PermissionFlagsBits.BanMembers,        "Ban Members"],
+  [PermissionFlagsBits.KickMembers,       "Kick Members"],
+  [PermissionFlagsBits.ManageGuild,       "Manage Server"],
+  [PermissionFlagsBits.ManageRoles,       "Manage Roles"],
+  [PermissionFlagsBits.ManageChannels,    "Manage Channels"],
+  [PermissionFlagsBits.ManageWebhooks,    "Manage Webhooks"],
+  [PermissionFlagsBits.ManageMessages,    "Manage Messages"],
+  [PermissionFlagsBits.MentionEveryone,   "Mention Everyone"],
+  [PermissionFlagsBits.MuteMembers,       "Mute Members"],
+  [PermissionFlagsBits.DeafenMembers,     "Deafen Members"],
+  [PermissionFlagsBits.MoveMembers,       "Move Members"],
+];
+
+interface RoleValidationResult {
+  ok:       boolean;
+  errors:   string[];
+  warnings: string[];
+}
+
+function validateVerificationRoles(
+  guild: Guild,
+  verifiedRole: Role,
+  unverifiedRole: Role,
+): RoleValidationResult {
+  const errors:   string[] = [];
+  const warnings: string[] = [];
+
+  // ── Must be distinct roles ─────────────────────────────────────────────────
+  if (verifiedRole.id === unverifiedRole.id) {
+    errors.push("Verified and Unverified must be **two different roles**.");
+  }
+
+  // ── Neither can be @everyone ───────────────────────────────────────────────
+  if (verifiedRole.id === guild.roles.everyone.id)
+    errors.push("@everyone cannot be the Verified role.");
+  if (unverifiedRole.id === guild.roles.everyone.id)
+    errors.push("@everyone cannot be the Unverified role.");
+
+  // ── Managed roles (bot/integration roles) can't be assigned ───────────────
+  if (verifiedRole.managed)
+    errors.push(`**${verifiedRole.name}** is managed by an integration — the bot can't assign it.`);
+  if (unverifiedRole.managed)
+    errors.push(`**${unverifiedRole.name}** is managed by an integration — the bot can't assign it.`);
+
+  // ── Bot must outrank both roles to assign them ─────────────────────────────
+  const botHighest = guild.members.me?.roles.highest.position ?? 0;
+  if (verifiedRole.position >= botHighest)
+    errors.push(
+      `**${verifiedRole.name}** is at or above the bot's highest role — move the bot's role higher in **Server Settings → Roles**.`,
+    );
+  if (unverifiedRole.position >= botHighest)
+    errors.push(
+      `**${unverifiedRole.name}** is at or above the bot's highest role — the bot won't be able to assign it.`,
+    );
+
+  // ── Dangerous permissions on the Unverified role ───────────────────────────
+  if (unverifiedRole.permissions.has(PermissionFlagsBits.Administrator)) {
+    // Hard block — unverified members with Admin is a critical security hole
+    errors.push("🚨 The Unverified role has **Administrator**. This is a critical security risk — remove it before continuing.");
+  } else {
+    const bad = DANGEROUS_UNVERIFIED_PERMS
+      .filter(([flag]) => unverifiedRole.permissions.has(flag))
+      .map(([, name]) => name);
+    if (bad.length > 0)
+      warnings.push(`Unverified role has risky permissions: **${bad.join(", ")}**. Unverified members will have these until they verify — consider removing them.`);
+  }
+
+  // ── Administrator on the Verified role (warn, not block) ──────────────────
+  if (verifiedRole.permissions.has(PermissionFlagsBits.Administrator))
+    warnings.push("The Verified role has **Administrator** — every verified member will have full server control. Make sure that's intentional.");
+
+  // ── Verified role should grant ViewChannel so members can see channels ─────
+  // If the role has no permissions at all and isn't relying on channel-level
+  // overwrites it might silently lock everyone out.  Warn only.
+  if (verifiedRole.permissions.toArray().length === 0)
+    warnings.push("The Verified role has **no permissions**. Members will rely entirely on channel-level overwrites for access — double-check that they'll be able to see your channels after verifying.");
+
+  return { ok: errors.length === 0, errors, warnings };
 }
 
 // ── Role resolver ──────────────────────────────────────────────────────────────
@@ -129,6 +215,41 @@ export async function handleSetupAuthVerification(message: import("discord.js").
       mentionable: false,
       reason:      "Auth verification setup",
     });
+  }
+
+  // ── 1b. Validate roles before touching anything ────────────────────────────
+  const validation = validateVerificationRoles(guild, verifiedRole, unverifiedRole);
+
+  if (!validation.ok) {
+    await statusMsg.edit({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xff4444)
+          .setTitle("❌ Setup Blocked — Role Issues Found")
+          .setDescription(
+            "Fix the following before running `?setupauthverification` again:\n\n" +
+            validation.errors.map(e => `• ${e}`).join("\n"),
+          )
+          .setFooter({ text: "No changes were made to your server." }),
+      ],
+    });
+    return;
+  }
+
+  if (validation.warnings.length > 0) {
+    await statusMsg.edit({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xf59e0b)
+          .setTitle("⚠️ Warnings — Setup Continuing…")
+          .setDescription(
+            "Setup is proceeding, but review these:\n\n" +
+            validation.warnings.map(w => `• ${w}`).join("\n"),
+          ),
+      ],
+    });
+    // Brief pause so the admin can read the warning before the next edit
+    await new Promise(r => setTimeout(r, 3000));
   }
 
   // ── 2. #verify channel ─────────────────────────────────────────────────────

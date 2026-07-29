@@ -52,12 +52,17 @@ export async function handleSetupVerification(message: Message): Promise<void> {
     .setLabel("Verify")
     .setStyle(ButtonStyle.Link)
     .setURL(oauthUrl)
-    .setEmoji({ name: "verification", id: "1512689271050469596" });
+    .setEmoji("✅");
 
   const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
-  await (message.channel as TextChannel).send({ embeds: [embed], components: [row] });
-  await message.delete().catch(() => {});
+  try {
+    await (message.channel as TextChannel).send({ embeds: [embed], components: [row] });
+    await message.delete().catch(() => {});
+  } catch (err) {
+    console.error("[VERIFICATION] Failed to send verification panel:", err);
+    await message.reply({ content: "❌ Failed to post the verification panel. Check my **Send Messages** and **Embed Links** permissions in this channel." }).catch(() => {});
+  }
 }
 
 export async function handleAddAuthPlayers(message: Message): Promise<void> {

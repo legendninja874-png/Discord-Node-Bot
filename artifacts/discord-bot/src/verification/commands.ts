@@ -48,16 +48,11 @@ export async function handleSetupVerification(message: Message): Promise<void> {
     )
     .setFooter({ text: "Last Stand · Verification" });
 
-  const emojiId = process.env.VERIFICATION_EMOJI_ID;
   const button = new ButtonBuilder()
     .setLabel("Verify")
     .setStyle(ButtonStyle.Link)
-    .setURL(oauthUrl);
-  if (emojiId) {
-    button.setEmoji({ name: "verification", id: emojiId });
-  } else {
-    button.setEmoji("🔐");
-  }
+    .setURL(oauthUrl)
+    .setEmoji({ name: "verification", id: "1512689271050469596" });
 
   const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 

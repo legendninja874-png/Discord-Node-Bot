@@ -490,7 +490,25 @@ export async function handleOAuthConfirm(
         verifiedRoleId   = cfgRes.rows[0]?.value?.verifiedRoleId   ?? null;
         unverifiedRoleId = cfgRes.rows[0]?.value?.unverifiedRoleId ?? null;
         storedRoles      = rolesRes.rows[0]?.roles ?? [];
-      } catch { /* proceed without config — roles won't be assigned */ }
+      } catch { /* fall through to name-based lookup */ }
+    }
+
+    // Fallback: if no config stored in DB (e.g. ?setupverification was used instead of
+    // ?setupauthverification, or DB is unavailable), look up roles by conventional names.
+    if (!verifiedRoleId || !unverifiedRoleId) {
+      const guildRoles = await getGuildRoles(guildId, botToken);
+      if (!verifiedRoleId) {
+        const r = guildRoles.find(r =>
+          r.name.toLowerCase() === "verified" ||
+          r.name.toLowerCase() === "clan members" ||
+          r.name.toLowerCase() === "member",
+        );
+        verifiedRoleId = r?.id ?? null;
+      }
+      if (!unverifiedRoleId) {
+        const r = guildRoles.find(r => r.name.toLowerCase() === "unverified");
+        unverifiedRoleId = r?.id ?? null;
+      }
     }
 
     // 5. Build final role list: previous roles + verified, minus unverified

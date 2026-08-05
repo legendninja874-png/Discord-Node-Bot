@@ -424,22 +424,6 @@ export async function handleOAuthConfirm(
     }
     const user = (await userRes.json()) as { id: string; username: string };
 
-    // 2b. Check if already verified for this guild
-    if (process.env.DATABASE_URL) {
-      try {
-        const existing = await getPool().query(
-          `SELECT 1 FROM auth_backups WHERE user_id = $1 AND guild_id = $2 LIMIT 1`,
-          [user.id, guildId],
-        );
-        if ((existing.rowCount ?? 0) > 0) {
-          sendHtml(res, 200, "Already verified.", "You're already verified in this server — no action needed.", true);
-          return;
-        }
-      } catch {
-        // DB check failed — proceed with normal verification flow
-      }
-    }
-
     // 3. Store token backup (per user + guild)
     const expiry = new Date(Date.now() + tokens.expires_in * 1000);
     const ipAddress =

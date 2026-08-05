@@ -461,6 +461,20 @@ export function registerLifecycleEvents(
     }
     // ─────────────────────────────────────────────────────────────────────────
 
+    // Route commands that start with ? or , BEFORE handing off to Assyst,
+    // otherwise Assyst intercepts them and they never reach the switch below.
+    {
+      const cmd = lower.split(/\s+/)[0];
+      if (cmd === "?antinuke") {
+        handleAntiNukeCommand(message, client).catch((err) => console.error("[ANTINUKE] Unhandled error:", err));
+        return;
+      }
+      if (cmd === ",ctby") {
+        handleCtbyCommand(message).catch((err) => console.error("[CTBY] Unhandled error:", err));
+        return;
+      }
+    }
+
     if ((content.startsWith("?") || content.startsWith(",")) && !content.startsWith("? ") && !content.startsWith(", ")) {
       const handled = await handleAssystCommand(message).catch((err) => {
         console.error("[ASSYST]", err);

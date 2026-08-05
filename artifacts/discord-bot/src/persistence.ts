@@ -358,6 +358,11 @@ async function ensureSchema(): Promise<void> {
   // Antinuke: add immune_ids column if it was created before this column existed
   await db.query(`ALTER TABLE antinuke_whitelist ADD COLUMN IF NOT EXISTS immune_ids TEXT[] NOT NULL DEFAULT '{}';`).catch(() => {});
 
+  // Antinuke: add punish_action column — was previously smuggled into the thresholds JSONB
+  await db.query(`ALTER TABLE antinuke_config ADD COLUMN IF NOT EXISTS punish_action TEXT NOT NULL DEFAULT 'strip';`).catch(() => {});
+  // Antinuke: add log_ping_ids column if missing (older deploys may not have it)
+  await db.query(`ALTER TABLE antinuke_config ADD COLUMN IF NOT EXISTS log_ping_ids TEXT[] NOT NULL DEFAULT '{}';`).catch(() => {});
+
   // Role snapshots — stores every member's roles before setup so they can be restored on verify
   await db.query(`
     CREATE TABLE IF NOT EXISTS member_role_snapshots (

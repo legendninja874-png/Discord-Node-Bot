@@ -341,7 +341,7 @@ export async function handleOAuthCallback(
   req: IncomingMessage,
   res: ServerResponse,
 ): Promise<void> {
-  const url     = new URL(req.url ?? "/", `https://${req.headers.host}`);
+  const url     = new URL(req.url ?? "/", `https://${req.headers.host ?? "localhost"}`);
   const code    = url.searchParams.get("code");
   const guildId = url.searchParams.get("state");
 
@@ -372,10 +372,18 @@ export async function handleOAuthConfirm(
   }
 
   const body = await new Promise<string>((resolve, reject) => {
+    // Timeout + size guard — prevents hung connections if the client disconnects.
+    const timer = setTimeout(() => reject(new Error("Body read timeout")), 10_000);
     let data = "";
-    req.on("data", (chunk: Buffer) => { data += chunk.toString(); });
-    req.on("end",  () => resolve(data));
-    req.on("error", reject);
+    req.on("data", (chunk: Buffer) => {
+      data += chunk.toString();
+      if (data.length > 8_000) {
+        clearTimeout(timer);
+        reject(new Error("Request body too large"));
+      }
+    });
+    req.on("end",   () => { clearTimeout(timer); resolve(data); });
+    req.on("error", (err) => { clearTimeout(timer); reject(err); });
   });
 
   const params  = new URLSearchParams(body);

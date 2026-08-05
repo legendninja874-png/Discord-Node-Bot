@@ -59,6 +59,8 @@ function proxyToApiServer(req: IncomingMessage, res: ServerResponse): void {
 
 export function startHttpServer(port: number): void {
   const server = http.createServer((req, res) => {
+    // Kill connections that never finish sending/receiving within 30 s.
+    req.socket.setTimeout(30_000);
     const path = req.url?.split("?")[0];
 
     if (path === "/api/oauth/callback") {

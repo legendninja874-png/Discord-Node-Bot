@@ -203,7 +203,7 @@ export async function executePromote(interaction: ChatInputCommandInteraction): 
   const reasons   = formatReasons(interaction.options.getString("reasons", true));
 
   const embed = new EmbedBuilder()
-    .setColor(0xFFAA00)
+    .setColor(0x1565C0)
     .setDescription(
       `<@${target.id}> **PROMOTED FROM** <@&${fromRole.id}> **to** <@&${toRole.id}>\n\n${reasons}`
     )

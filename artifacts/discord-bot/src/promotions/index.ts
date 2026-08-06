@@ -205,7 +205,7 @@ export async function executePromote(interaction: ChatInputCommandInteraction): 
   const embed = new EmbedBuilder()
     .setColor(0x1565C0)
     .setDescription(
-      `<@${target.id}> **PROMOTED FROM** <@&${fromRole.id}> **to** <@&${toRole.id}>\n\n${reasons}`
+      `## <@${target.id}> PROMOTED\n### FROM <@&${fromRole.id}> → <@&${toRole.id}>\n\n${reasons}`
     )
     .setFooter({
       text:    `Promoted by ${interaction.user.displayName}`,
@@ -239,7 +239,7 @@ export async function executeDemote(interaction: ChatInputCommandInteraction): P
   const embed = new EmbedBuilder()
     .setColor(0xFF6B00)
     .setDescription(
-      `<@${target.id}> **DEMOTED FROM** <@&${fromRole.id}> **to** <@&${toRole.id}>\n\n${reasons}`
+      `## <@${target.id}> DEMOTED\n### FROM <@&${fromRole.id}> → <@&${toRole.id}>\n\n${reasons}`
     )
     .setFooter({
       text:    `Demoted by ${interaction.user.displayName}`,

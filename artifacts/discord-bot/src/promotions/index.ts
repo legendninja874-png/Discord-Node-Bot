@@ -60,6 +60,19 @@ async function hasAccess(interaction: ChatInputCommandInteraction): Promise<bool
   return cfg.accessRoleIds.some(id => roleIds.includes(id));
 }
 
+// ── Hierarchy guard ────────────────────────────────────────────────────────────
+// Prevents mods from promoting anyone to a role at or above their own highest role.
+// Administrators are exempt — they already have full server control.
+
+function guardHierarchy(
+  interaction: ChatInputCommandInteraction,
+  toRolePosition: number,
+): boolean {
+  if (interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) return true;
+  const invokerHighest = (interaction.member as GuildMember).roles.highest.position;
+  return toRolePosition < invokerHighest;
+}
+
 // ── Reason formatter ──────────────────────────────────────────────────────────
 
 function formatReasons(raw: string): string {
@@ -202,6 +215,12 @@ export async function executePromote(interaction: ChatInputCommandInteraction): 
   const toRole    = interaction.options.getRole("to", true);
   const reasons   = formatReasons(interaction.options.getString("reasons", true));
 
+  // Block privilege escalation: mods cannot promote to a role at or above their own
+  if (!guardHierarchy(interaction, toRole.position)) {
+    await interaction.editReply("❌ You can't promote someone to a role at or above your own highest role.");
+    return;
+  }
+
   // Fetch the guild member and swap roles
   const member = await interaction.guild!.members.fetch(target.id).catch(() => null);
   if (!member) {
@@ -249,6 +268,12 @@ export async function executeDemote(interaction: ChatInputCommandInteraction): P
   const fromRole = interaction.options.getRole("from", true);
   const toRole   = interaction.options.getRole("to", true);
   const reasons  = formatReasons(interaction.options.getString("reasons", true));
+
+  // Block privilege escalation: mods cannot demote someone from a role at or above their own
+  if (!guardHierarchy(interaction, fromRole.position)) {
+    await interaction.editReply("❌ You can't demote someone from a role at or above your own highest role.");
+    return;
+  }
 
   // Fetch the guild member and swap roles
   const member = await interaction.guild!.members.fetch(target.id).catch(() => null);

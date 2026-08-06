@@ -27,13 +27,12 @@ import {
   executeAnnounce,
   executeWarn,
   executeClearWarns,
-  executePromote,
-  executeDemote,
   executeAttendance,
   executePoll,
   executeMvp,
   executeSuggestion,
 } from "../utility/index.js";
+import { executePromote, executeDemote } from "../promotions/index.js";
 import { executeBackupDb } from "../utility/backup.js";
 import { executeSetupRules } from "../rules/index.js";
 import { executeTournament, executeCloseTournament } from "../tournament/index.js";

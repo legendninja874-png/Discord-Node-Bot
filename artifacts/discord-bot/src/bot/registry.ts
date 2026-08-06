@@ -57,6 +57,7 @@ import {
   lowoadminData,
 } from "../lowo/slashCommands.js";
 import { trainingData } from "../training/index.js";
+import { promoteData, demoteData } from "../promotions/index.js";
 import {
   mvpData,
 } from "../utility/index.js";
@@ -106,6 +107,8 @@ const SLASH_COMMANDS: unknown[] = [
   endRaidData.toJSON(),
   raidCallData.toJSON(),
   trainingData.toJSON(),
+  promoteData.toJSON(),
+  demoteData.toJSON(),
   mvpData.toJSON(),
   setupRulesData.toJSON(),
   tournamentData.toJSON(),

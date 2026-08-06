@@ -157,8 +157,6 @@ export const demoteData = new SlashCommandBuilder()
 // ── /promote handler ──────────────────────────────────────────────────────────
 
 export async function executePromote(interaction: ChatInputCommandInteraction): Promise<void> {
-  await interaction.deferReply({ ephemeral: true });
-
   const sub = interaction.options.getSubcommand();
 
   // /promote logs
@@ -222,8 +220,6 @@ export async function executePromote(interaction: ChatInputCommandInteraction): 
 // ── /demote handler ───────────────────────────────────────────────────────────
 
 export async function executeDemote(interaction: ChatInputCommandInteraction): Promise<void> {
-  await interaction.deferReply({ ephemeral: true });
-
   const sub = interaction.options.getSubcommand();
   if (sub !== "member") {
     await interaction.editReply("❌ Unknown subcommand.");

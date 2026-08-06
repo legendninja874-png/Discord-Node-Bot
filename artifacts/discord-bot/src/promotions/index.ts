@@ -202,6 +202,20 @@ export async function executePromote(interaction: ChatInputCommandInteraction): 
   const toRole    = interaction.options.getRole("to", true);
   const reasons   = formatReasons(interaction.options.getString("reasons", true));
 
+  // Fetch the guild member and swap roles
+  const member = await interaction.guild!.members.fetch(target.id).catch(() => null);
+  if (!member) {
+    await interaction.editReply("❌ Could not find that member in this server.");
+    return;
+  }
+  try {
+    await member.roles.remove(fromRole.id, `Promoted by ${interaction.user.tag}`);
+    await member.roles.add(toRole.id,    `Promoted by ${interaction.user.tag}`);
+  } catch {
+    await interaction.editReply("❌ Failed to update roles — make sure my role is above the roles being changed.");
+    return;
+  }
+
   const embed = new EmbedBuilder()
     .setColor(0x1565C0)
     .setDescription(
@@ -235,6 +249,20 @@ export async function executeDemote(interaction: ChatInputCommandInteraction): P
   const fromRole = interaction.options.getRole("from", true);
   const toRole   = interaction.options.getRole("to", true);
   const reasons  = formatReasons(interaction.options.getString("reasons", true));
+
+  // Fetch the guild member and swap roles
+  const member = await interaction.guild!.members.fetch(target.id).catch(() => null);
+  if (!member) {
+    await interaction.editReply("❌ Could not find that member in this server.");
+    return;
+  }
+  try {
+    await member.roles.remove(fromRole.id, `Demoted by ${interaction.user.tag}`);
+    await member.roles.add(toRole.id,    `Demoted by ${interaction.user.tag}`);
+  } catch {
+    await interaction.editReply("❌ Failed to update roles — make sure my role is above the roles being changed.");
+    return;
+  }
 
   const embed = new EmbedBuilder()
     .setColor(0xFF6B00)

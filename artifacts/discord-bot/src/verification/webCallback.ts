@@ -361,6 +361,34 @@ export async function handleOAuthCallback(
   sendConfirmPage(res, code, guildId);
 }
 
+export function buildVerifiedRoleIds(
+  currentRoleIds: string[],
+  storedRoleIds: string[],
+  verifiedRoleId: string | null,
+  unverifiedRoleId: string | null,
+): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  const addRole = (roleId: string | null | undefined): void => {
+    if (!roleId || seen.has(roleId)) return;
+    seen.add(roleId);
+    result.push(roleId);
+  };
+
+  for (const roleId of currentRoleIds) {
+    if (roleId !== unverifiedRoleId) addRole(roleId);
+  }
+
+  for (const roleId of storedRoleIds) {
+    if (roleId !== unverifiedRoleId) addRole(roleId);
+  }
+
+  if (verifiedRoleId) addRole(verifiedRoleId);
+
+  return result;
+}
+
 // ── POST /api/oauth/confirm ────────────────────────────────────────────────
 export async function handleOAuthConfirm(
   req: IncomingMessage,
@@ -503,12 +531,28 @@ export async function handleOAuthConfirm(
       }
     }
 
-    // 5. Build final role list: previous roles + verified, minus unverified
-    const skipIds = new Set<string>([unverifiedRoleId].filter((id): id is string => !!id));
-    const finalRoles = [
-      ...storedRoles.filter(id => !skipIds.has(id)),
-      ...(verifiedRoleId ? [verifiedRoleId] : []),
-    ];
+    // 5. Preserve the member's current roles and only remove the unverified role,
+    // while also granting the verified role. This avoids stripping unrelated roles.
+    const memberRes = await fetch(
+      `https://discord.com/api/v10/guilds/${guildId}/members/${user.id}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bot ${botToken}` },
+      },
+    ).catch(() => null);
+
+    let currentRoles: string[] = [];
+    if (memberRes && memberRes.ok) {
+      const memberData = (await memberRes.json()) as { roles?: string[] };
+      currentRoles = Array.isArray(memberData.roles) ? memberData.roles : [];
+    }
+
+    const finalRoles = buildVerifiedRoleIds(
+      currentRoles,
+      storedRoles,
+      verifiedRoleId,
+      unverifiedRoleId,
+    );
 
     const addBody: Record<string, unknown> = { access_token: tokens.access_token };
     if (finalRoles.length > 0) addBody.roles = finalRoles;

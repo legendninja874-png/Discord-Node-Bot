@@ -610,12 +610,12 @@ export async function handleAntiNukeCommand(message: Message, client: Client): P
           { name: "Punishment",  value: punishLabels[cfg.punishAction],                inline: true },
           { name: "Log Channel", value: logRef,                                        inline: true },
           {
-            name:   "🟡 Lenient WL",
+            name:   "🟡 Special WL",
             value:  wl.lenient.size > 0 ? `${wl.lenient.size} user(s)` : "*None*",
             inline: true,
           },
           {
-            name:   "🟢 Immune WL",
+            name:   "🟢 Normal WL",
             value:  wl.immune.size > 0 ? `${wl.immune.size} user(s)` : "*None*",
             inline: true,
           },
@@ -674,7 +674,7 @@ function buildHelpEmbed(): EmbedBuilder {
         ].join("\n"),
       },
       {
-        name:  "🟡 Lenient Whitelist — trusted staff with higher limits",
+        name:  "🟡 Special Whitelist — trusted staff with higher limits",
         value: [
           "`?antinuke whitelist @user` — Add (shorthand)",
           "`?antinuke whitelist add @user` — Add",
@@ -684,7 +684,7 @@ function buildHelpEmbed(): EmbedBuilder {
         ].join("\n"),
       },
       {
-        name:  "🟢 Immune Whitelist — fully bypasses anti-nuke",
+        name:  "🟢 Normal Whitelist — fully bypasses anti-nuke",
         value: [
           "`?antinuke whitelist-i @user` — Add (shorthand)",
           "`?antinuke whitelist-i add @user` — Add",

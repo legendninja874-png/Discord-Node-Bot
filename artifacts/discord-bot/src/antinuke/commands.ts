@@ -705,7 +705,7 @@ function buildHelpEmbed(): EmbedBuilder {
                "`guildUpdate` `webhookCreate` `emojiDelete` + webhook message spam",
       },
     )
-    .setFooter({ text: "Guild owner + bot always exempt • Bots = instant ban on first action" });
+    .setFooter({ text: "Guild owner + bot always exempt • Bots = instant ban on first action. Made by EoN daddy ☺️" });
 }
 
 // ── ,th <number> — set all antinuke thresholds at once ───────────────────────

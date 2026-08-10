@@ -622,7 +622,7 @@ export async function handleAntiNukeCommand(message: Message, client: Client): P
           { name: "Log Pings",  value: pingsRef,        inline: false },
           { name: "Thresholds", value: thresholdLines,  inline: false },
         )
-        .setFooter({ text: "Bots are always banned regardless of punishment setting" }),
+        .setFooter({ text: "Bots are always banned regardless of punishment setting. Made by EoN daddy ☺️" }),
     ] });
     return;
   }

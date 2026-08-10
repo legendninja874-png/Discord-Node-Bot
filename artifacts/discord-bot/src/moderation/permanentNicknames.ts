@@ -88,7 +88,7 @@ export async function removePermanentNickname({
 
 export async function handlePermanentNickCommand(message: Message): Promise<boolean> {
   if (!message.guild || !message.member) return false;
-  if (!message.member.permissions.has(PermissionFlagsBits.ManageNicknames)) return false;
+  if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) return false;
 
   const content = message.content.trim();
   const lower = content.toLowerCase();

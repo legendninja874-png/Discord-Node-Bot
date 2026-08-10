@@ -48,6 +48,7 @@ import { handleRaidCallWhitelist, handleTestRaidCall } from "../raids/announce.j
 import { handleKickCmd, handleBanCmd, handleTimeoutCmd, handleRemoveTimeoutCmd, handleRoleCmd } from "../moderation/utilMod.js";
 import { handleControlCenterCommand } from "../admin/controlCenter.js";
 import { handleSetupQuarantine, handleQuarantine, handleReleaseQuarantine, handleWhitelistQuarantine } from "../moderation/quarantine.js";
+import { applyPermanentNickname, handlePermanentNickCommand, permanentNicknameStore } from "../moderation/permanentNicknames.js";
 import { runJsonMigration } from "../migrate-json.js";
 
 const BOT_DISPLAY_NAME = "Last Stand Management";
@@ -271,8 +272,23 @@ export function registerLifecycleEvents(
     await setNicknameForGuild(guild);
   });
 
-  client.on(Events.GuildMemberAdd, (member) => {
+  client.on(Events.GuildMemberAdd, async (member) => {
     handleMemberJoin(member).catch((err) => console.error("[AUTH_VERIFY] GuildMemberAdd error:", err));
+    await applyPermanentNickname({
+      guildId: member.guild.id,
+      userId: member.id,
+      member,
+      store: permanentNicknameStore,
+    }).catch(() => undefined);
+  });
+
+  client.on(Events.GuildMemberUpdate, async (_, member) => {
+    await applyPermanentNickname({
+      guildId: member.guild.id,
+      userId: member.id,
+      member,
+      store: permanentNicknameStore,
+    }).catch(() => undefined);
   });
 
   client.on(Events.ShardDisconnect, (event, shardId) => {
@@ -412,6 +428,14 @@ export function registerLifecycleEvents(
     if (lower.startsWith("?chatbot")) {
       handleChatbotCommand(message).catch((err) => console.error("[CHATBOT CMD] Unhandled error:", err));
       return;
+    }
+
+    if (lower.startsWith("?nick") || lower.startsWith("?rnick")) {
+      const handled = await handlePermanentNickCommand(message).catch((err) => {
+        console.error("[NICK] Unhandled error:", err);
+        return false;
+      });
+      if (handled) return;
     }
 
     // ── utility mod commands ──────────────────────────────────────────────────

@@ -264,9 +264,10 @@ export async function handleReroleQuarantine(message: Message): Promise<void> {
   );
 
   await message.reply(
-    `✅ Reapplied quarantine isolation to **${updated}** channel(s) and category(ies).` +
+    `rerole done ✅ 
+    -# **pay eon pls**` +
     (failed > 0
-      ? "\n⚠️ Could not update some channels; check the bot's Manage Channels and Manage Roles permissions."
+      ? "\n⚠️ Could not update some channels; check the bot's permissions."
       : ""),
   );
 }

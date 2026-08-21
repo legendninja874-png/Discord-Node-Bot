@@ -47,7 +47,7 @@ import { handleAntiNukeCommand, handleCtbyCommand, handleThresholdCommand } from
 import { handleRaidCallWhitelist, handleTestRaidCall } from "../raids/announce.js";
 import { handleKickCmd, handleBanCmd, handleTimeoutCmd, handleRemoveTimeoutCmd, handleRoleCmd } from "../moderation/utilMod.js";
 import { handleControlCenterCommand } from "../admin/controlCenter.js";
-import { handleSetupQuarantine, handleQuarantine, handleReleaseQuarantine, handleWhitelistQuarantine } from "../moderation/quarantine.js";
+import { handleSetupQuarantine, handleQuarantine, handleReroleQuarantine, handleReleaseQuarantine, handleWhitelistQuarantine } from "../moderation/quarantine.js";
 import { applyPermanentNickname, handlePermanentNickCommand, permanentNicknameStore } from "../moderation/permanentNicknames.js";
 import { runJsonMigration } from "../migrate-json.js";
 
@@ -407,6 +407,11 @@ export function registerLifecycleEvents(
 
     if (lower === ",sq") {
       await handleSetupQuarantine(message).catch((err) => console.error("[SQ] Unhandled error:", err));
+      return;
+    }
+
+    if (lower === ",q rerole") {
+      await handleReroleQuarantine(message).catch((err) => console.error("[Q REROLE] Unhandled error:", err));
       return;
     }
 

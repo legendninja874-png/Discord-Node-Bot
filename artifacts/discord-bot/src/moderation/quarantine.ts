@@ -127,6 +127,44 @@ async function getOrFindQuarantineChannel(message: Message): Promise<TextChannel
   return (ch as TextChannel) ?? null;
 }
 
+async function applyQuarantineChannelPermissions(
+  guild: Message["guild"],
+  quarantineRole: Role,
+  quarantineChannel: TextChannel | null,
+): Promise<{ updated: number; failed: number }> {
+  let updated = 0;
+  let failed = 0;
+
+  for (const [, channel] of guild!.channels.cache) {
+    if (channel.isThread()) continue;
+
+    try {
+      if (quarantineChannel && channel.id === quarantineChannel.id) {
+        await channel.permissionOverwrites.edit(guild!.roles.everyone, {
+          ViewChannel: false,
+        });
+        await channel.permissionOverwrites.edit(quarantineRole, {
+          ViewChannel: true,
+          SendMessages: true,
+          ReadMessageHistory: true,
+          AttachFiles: false,
+          AddReactions: false,
+          UseApplicationCommands: false,
+        });
+      } else {
+        await channel.permissionOverwrites.edit(quarantineRole, {
+          ViewChannel: false,
+        });
+      }
+      updated++;
+    } catch {
+      failed++;
+    }
+  }
+
+  return { updated, failed };
+}
+
 // ─── ,sq — Setup Quarantine ───────────────────────────────────────────────────
 
 export async function handleSetupQuarantine(message: Message): Promise<void> {
@@ -150,18 +188,7 @@ export async function handleSetupQuarantine(message: Message): Promise<void> {
     });
   }
 
-  // ── 2. Deny the role from seeing every existing channel ──────────────────
-  for (const [, channel] of guild.channels.cache) {
-    if (channel.name === QUARANTINE_CHANNEL_NAME) continue;
-    if (channel.isThread()) continue;
-    try {
-      await channel.permissionOverwrites.edit(quarantineRole, {
-        ViewChannel: false,
-      });
-    } catch { /* skip channels we can't edit */ }
-  }
-
-  // ── 3. Create or find the quarantine-chat channel ────────────────────────
+  // ── 2. Create or find the quarantine-chat channel ────────────────────────
   let quarantineChannel = guild.channels.cache.find(
     (c) => c.name === QUARANTINE_CHANNEL_NAME && c.type === ChannelType.GuildText,
   ) as TextChannel | undefined;
@@ -188,20 +215,10 @@ export async function handleSetupQuarantine(message: Message): Promise<void> {
       ],
       reason: "Quarantine system setup",
     });
-  } else {
-    // Ensure correct overwrites on existing channel
-    await quarantineChannel.permissionOverwrites.edit(guild.roles.everyone, {
-      ViewChannel: false,
-    });
-    await quarantineChannel.permissionOverwrites.edit(quarantineRole, {
-      ViewChannel: true,
-      SendMessages: true,
-      ReadMessageHistory: true,
-      AttachFiles: false,
-      AddReactions: false,
-      UseApplicationCommands: false,
-    });
   }
+
+  // Apply the isolation rules after the quarantine channel exists.
+  await applyQuarantineChannelPermissions(guild, quarantineRole, quarantineChannel);
 
   const embed = new EmbedBuilder()
     .setColor(Colors.DarkRed)
@@ -217,6 +234,41 @@ export async function handleSetupQuarantine(message: Message): Promise<void> {
     .setTimestamp();
 
   await loading.edit({ content: "", embeds: [embed] });
+}
+
+// ─── ,q rerole — Reapply quarantine isolation to all channels ────────────────
+
+export async function handleReroleQuarantine(message: Message): Promise<void> {
+  if (!message.guild || !message.member) return;
+  if (!isAdmin(message.member)) {
+    await message.reply("❌ You need Administrator permission to use `,q rerole`.");
+    return;
+  }
+
+  const quarantineRole = await getOrFindQuarantineRole(message);
+  if (!quarantineRole) {
+    await message.reply("❌ Quarantine role not found. Run `,sq` first to set up the quarantine system.");
+    return;
+  }
+
+  const quarantineChannel = await getOrFindQuarantineChannel(message);
+  if (!quarantineChannel) {
+    await message.reply("❌ `quarantine-chat` channel not found. Run `,sq` first to set up the quarantine system.");
+    return;
+  }
+
+  const { updated, failed } = await applyQuarantineChannelPermissions(
+    message.guild,
+    quarantineRole,
+    quarantineChannel,
+  );
+
+  await message.reply(
+    `✅ Reapplied quarantine isolation to **${updated}** channel(s) and category(ies).` +
+    (failed > 0
+      ? "\n⚠️ Could not update some channels; check the bot's Manage Channels and Manage Roles permissions."
+      : ""),
+  );
 }
 
 // ─── ,q @user — Quarantine a member ──────────────────────────────────────────

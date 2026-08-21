@@ -264,8 +264,7 @@ export async function handleReroleQuarantine(message: Message): Promise<void> {
   );
 
   await message.reply(
-    `rerole done ✅ 
-    -# **pay eon pls**` +
+    `rerole done ✅🔥☺️` +
     (failed > 0
       ? "\n⚠️ Could not update some channels; check the bot's permissions."
       : ""),

@@ -117,11 +117,13 @@ import {
 } from "../lowo/slashCommands.js";
 import { handleCreateTicket } from "../tickets/ticketFlow.js";
 import { handleCloseTicket, handleDeleteTicket } from "../tickets/ticketControls.js";
+import { executeCreator } from "../commands/creator.js";
 
 export const PUBLIC_COMMANDS: ReadonlySet<string> = new Set([
   "levellb", "weeklylb", "rank", "leaderboard", "help",
   "userinfo", "serverinfo", "avatar", "roleinfo", "botinfo", "ping",
   "channelinfo", "time", "afk", "reminder",
+  "creator",
   "play", "pause", "resume", "skip", "queue", "volume",
   "nowplaying", "shuffle", "loop", "stop",
   "warnings",
@@ -218,6 +220,7 @@ export function buildSlashHandlers(
     channelinfo: executeChannelinfo,
     translate: executeTranslate,
     time: executeTime,
+    creator: (i) => executeCreator(i, client),
     play: executePlay,
     pause: executePause,
     resume: executeResume,

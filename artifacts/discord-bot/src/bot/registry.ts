@@ -87,6 +87,7 @@ import {
   pingData,
   translateData,
 } from "../utility/utilCommands.js";
+import { creatorData } from "../commands/creator.js";
 
 const SLASH_COMMANDS: unknown[] = [
   setupPanelData.toJSON(),
@@ -154,6 +155,7 @@ const SLASH_COMMANDS: unknown[] = [
   botinfoData.toJSON(),
   pingData.toJSON(),
   translateData.toJSON(),
+  creatorData.toJSON(),
 ];
 
 export const BASE_COMMANDS: unknown[] = [
